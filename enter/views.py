@@ -1,16 +1,32 @@
+import datetime
 from django.shortcuts import render
-from .models import record
-from .forms import entryform
+from .models import Student
+from .forms import LibraryForm
 from django.views.generic import View
+from datetime import datetime
 
-# Create your views here.
-def home(request):
+
+def library(request):
     if request.method == 'POST':
-        form=entryform(request.POST)
-        form.save()
-        return render(request, 'home.html', {'form':entryform , 'message':'Entry Recorded'})
+        form = LibraryForm(request.POST)
+        if form.is_valid():
+            roll_number = form.cleaned_data['roll_number']
+            try:
+                student = Student.objects.get(roll_number=roll_number)
+                if student.entry_time and not student.exit_time:
+                    student.exit_time = datetime.now()
+                    student.save()
+                    message = "Exit time recorded for student with roll number {}".format(roll_number)
+                else:
+                    message = "Invalid request"
+            except Student.DoesNotExist:
+                student = Student(roll_number=roll_number)
+                student.entry_time = datetime.now()
+                student.save()
+                message = "Entry time recorded for student with roll number {}".format(roll_number)
+        else:
+            message = "Invalid form data"
     else:
-        return render(request, 'home.html', {'form':entryform})
-
-def entry(request):
-    return render(request, 'entry.html')
+        form = LibraryForm()
+        message = ""
+    return render(request, 'library.html', {'form': form, 'message': message})

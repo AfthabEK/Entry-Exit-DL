@@ -19,5 +19,5 @@ from enter import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
+    path('library/', views.library, name='library'),
 ]

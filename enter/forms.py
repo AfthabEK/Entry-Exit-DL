@@ -1,7 +1,4 @@
 from django import forms
-from .models import record
 
-class entryform(forms.ModelForm):
-    class Meta:
-        model = record
-        fields = ['rollno']
+class LibraryForm(forms.Form):
+    roll_number = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control'}))

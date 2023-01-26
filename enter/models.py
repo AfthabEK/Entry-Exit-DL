@@ -8,3 +8,11 @@ class record(models.Model):
 
     def __str__(self):
         return self.rollno
+
+class Student(models.Model):
+    roll_number = models.CharField(max_length=10)
+    entry_time = models.DateTimeField(blank=True, null=True)
+    exit_time = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.roll_number
