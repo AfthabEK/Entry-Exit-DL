@@ -6,6 +6,7 @@ from enter import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('library/', views.library, name='library'),
-    path('date_entries/<str:date>/', views.date_entries, name='date_entries')
-    
+    path('records/', views.records, name='records'),
+    path('allrecords/', views.allrecords, name='allrecords'),
+    path('recordsbystatus/', views.recordsbystatus, name='recordsbystatus'),
 ]

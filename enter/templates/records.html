@@ -1,0 +1,25 @@
+<h2>Records for {{ date }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Roll Number</th>
+            <th>Entry Time</th>
+            <th>Exit Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.rollno }}</td>
+            <td>{{ student.entrytime }}</td>
+            <td>{{ student.exittime }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+    </table>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Back">
+    </form>

@@ -1,41 +1,56 @@
 import datetime
 from django.shortcuts import render
 from .models import record
-from .forms import recordform, StudentEntryExitForm
-from django.views.generic import View
+from .forms import StudentEntryExitForm, DateForm
 from datetime import datetime
-import time
-from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.contrib import messages
+from datetime import date
 
 
 
 
 def library(request):
+    message=""
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        today = date.today()
+        
         try:
             student = record.objects.get(rollno=student_id,status='IN')
             if student.exittime is None:
-                student.exittime = datetime.now()
+                student.exittime = current_time
                 student.status = 'OUT'
                 student.save()
-                message="Student with rollno: "+student_id+" has exited the library at "+str(datetime.now().replace(microsecond=0))
+                message="Student with rollno: "+student_id+" has exited the library at "+str(current_time)
             else:
-                    record.objects.create(rollno=student_id, entrytime=datetime.now())
-                    message="Student with rollno: "+student_id+" has entered the library at "+str(datetime.now().replace(microsecond=0))
+                    record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
+                    message="Student with rollno: "+student_id+" has entered the library at "+str(current_time)
         except record.DoesNotExist:
-            record.objects.create(rollno=student_id, entrytime=datetime.now())
-            message="Student with rollno: "+student_id+" has entered the library at "+str(datetime.now().replace(microsecond=0))
+            record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
+            message="Student with rollno: "+student_id+" has entered the library at "+str(current_time)
     return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message})
 
 
 
-def date_entries(request, date):
-  
-    start_date = datetime.strptime(date + " 00:00:00", '%Y-%m-%d %H:%M:%S').date()
-    end_date = datetime.strptime(date + " 23:59:59", '%Y-%m-%d %H:%M:%S').date()
-    date_entries = record.objects.filter(entrytime__range=(start_date,end_date))
-    context = {'date_entries': date_entries}
-    return render(request, 'date_entries.html', context)
+
+
+#show all records
+def allrecords(request):
+    students = record.objects.all()
+    form = DateForm(request.POST)
+    return render(request, 'records.html', {'students': students, 'form': form})
+
+# view to display records of a particular date
+def records(request):
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        students = record.objects.filter(date=date)
+        return render(request, 'records.html', {'students': students, 'form': DateForm(),'date': date})
+    return render(request, 'records_form.html', {'form': DateForm(), 'date': date})
+
+def recordsbystatus(request):
+        students = record.objects.filter(status='IN')
+        return render(request, 'current.html', {'students': students})
+   

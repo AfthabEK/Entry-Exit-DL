@@ -2,8 +2,9 @@ from django.db import models
 
 class record(models.Model):
     rollno = models.CharField(max_length=100)
-    entrytime = models.DateTimeField()
-    exittime = models.DateTimeField(blank=True, null=True)
+    entrytime = models.TimeField()
+    exittime = models.TimeField(blank=True, null=True)
+    date = models.DateField()
     status=models.CharField(default='IN',max_length=4)
 
     def __str__(self):
