@@ -1,10 +1,11 @@
-import datetime
+import datetime,csv
 from django.shortcuts import render
 from .models import record
 from .forms import StudentEntryExitForm, DateForm
 from datetime import datetime
 from django.shortcuts import redirect
 from datetime import date
+from django.http import HttpResponse
 
 
 
@@ -40,7 +41,7 @@ def library(request):
 def allrecords(request):
     students = record.objects.all()
     form = DateForm(request.POST)
-    return render(request, 'records.html', {'students': students, 'form': form})
+    return render(request, 'allrecords.html', {'students': students, 'form': form})
 
 # view to display records of a particular date
 def records(request):
@@ -48,9 +49,33 @@ def records(request):
         date = request.POST.get('date')
         students = record.objects.filter(date=date)
         return render(request, 'records.html', {'students': students, 'form': DateForm(),'date': date})
-    return render(request, 'records_form.html', {'form': DateForm(), 'date': date})
+    return render(request, 'records_form.html', {'form': DateForm()})
 
+# view to display records by status
 def recordsbystatus(request):
         students = record.objects.filter(status='IN')
         return render(request, 'current.html', {'students': students})
-   
+
+# view to export records to csv
+def export(request):
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+    writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
+    for row in record.objects.all().values_list('rollno', 'entrytime', 'exittime', 'date'):
+        writer.writerow(row)
+    response['Content-Disposition'] = 'attachment; filename="records.csv"'
+    return response
+
+# view to export records of a particular date to csv
+def exportbydate(request):
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        response = HttpResponse(content_type='text/csv')
+        writer = csv.writer(response)
+        writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
+        for row in record.objects.filter(date=date).values_list('rollno', 'entrytime', 'exittime'):
+            writer.writerow(row)
+        response['Content-Disposition'] = 'attachment; filename="records.csv"'
+        return response
+    else:
+        return render(request, 'records_formcsv.html', {'form': DateForm()})

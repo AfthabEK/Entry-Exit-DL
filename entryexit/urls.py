@@ -9,4 +9,6 @@ urlpatterns = [
     path('records/', views.records, name='records'),
     path('allrecords/', views.allrecords, name='allrecords'),
     path('recordsbystatus/', views.recordsbystatus, name='recordsbystatus'),
+    path('export/', views.export, name='export'),
+    path('exportbydate/', views.exportbydate, name='exportbydate')
 ]
