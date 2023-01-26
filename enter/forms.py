@@ -1,4 +1,10 @@
 from django import forms
+from .models import record
 
-class LibraryForm(forms.Form):
-    roll_number = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'class': 'form-control'}))
+class recordform(forms.ModelForm):
+    class Meta:
+        model = record
+        fields = ('rollno',)
+
+class StudentEntryExitForm(forms.Form):
+    student_id = forms.CharField(max_length=255)

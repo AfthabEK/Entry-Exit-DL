@@ -7,12 +7,12 @@
     <title>Home</title>
 </head>
 <body>
-    This is the home page
+    <h1>Central Library Entry-Exit System</h1>
     {{ message }}
-    <form method="post">
+    <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Submit">
-    </form>
+      </form>
 </body>
 </html>
