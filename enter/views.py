@@ -1,7 +1,7 @@
 import datetime,csv
 from django.shortcuts import render
 from .models import record
-from .forms import StudentEntryExitForm, DateForm
+from .forms import StudentEntryExitForm, DateForm, MonthForm
 from datetime import datetime
 from django.shortcuts import redirect
 from datetime import date
@@ -52,9 +52,21 @@ def allrecords(request):
 def records(request):
     if request.method == 'POST':
         date = request.POST.get('date')
+        
         students = record.objects.filter(date=date)
         return render(request, 'records.html', {'students': students, 'form': DateForm(),'date': date})
     return render(request, 'records_form.html', {'form': DateForm()})
+
+# view to display records of a particular month
+def recordsbymonth(request):
+    if request.method == 'POST':
+        month = request.POST.get('month')
+        monthname = datetime.strptime(month, '%Y-%m-%d').strftime('%B')
+        month = int(month[5:7])
+        students = record.objects.filter(date__month=month)
+        return render(request, 'records_month.html', {'students': students, 'form': MonthForm,'month': month, 'monthname': monthname})
+    return render(request, 'records_month_form.html', {'form': MonthForm()})
+
 
 # view to display records by status
 def recordsbystatus(request):
@@ -84,3 +96,18 @@ def exportbydate(request):
         return response
     else:
         return render(request, 'records_formcsv.html', {'form': DateForm()})
+
+# view to export records of a particular month to csv
+def exportbymonth(request):
+    if request.method == 'POST':
+        month = request.POST.get('month')
+        month = int(month[5:7])
+        response = HttpResponse(content_type='text/csv')
+        writer = csv.writer(response)
+        writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
+        for row in record.objects.filter(date__month=month).values_list('rollno', 'entrytime', 'exittime'):
+            writer.writerow(row)
+        response['Content-Disposition'] = 'attachment; filename="records.csv"'
+        return response
+    else:
+        return render(request, 'records_month_formcsv.html', {'form': MonthForm()})

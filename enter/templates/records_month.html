@@ -1,0 +1,36 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %}
+  Records for {{ monthname }}
+{% endblock %}
+
+{% block content%}
+
+<h2 class="text-center">Records for {{ monthname }}</h2>
+<table class="neon-table">
+    <thead>
+        <tr>
+            <th>Roll Number</th>
+            <th>Entry Time</th>
+            <th>Exit Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.rollno }}</td>
+            <td>{{ student.entrytime }}</td>
+            <td>{{ student.exittime }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+    </table>
+    <br>
+
+    <form method="post" class="text-center mt-4 mb-5">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}

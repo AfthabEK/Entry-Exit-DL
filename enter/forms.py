@@ -10,4 +10,7 @@ class StudentEntryExitForm(forms.Form):
 class DateForm(forms.Form):
     date = forms.DateField(widget=DateInput)
 
+class MonthForm(forms.Form):
+    month = forms.DateField(widget=DateInput)
+
     

@@ -152,7 +152,13 @@ input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, tex
                 <a class="nav-link active" aria-current="page" href="{% url 'records' %}">Records by date</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'exportbydate' %}">Download records by date</a>
+                <a class="nav-link active" aria-current="page" href="{% url 'recordsbymonth' %}">Records by month</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'exportbydate' %}">Download by date</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'exportbymonth' %}">Download by month</a>
               </li>
             </ul>
           
