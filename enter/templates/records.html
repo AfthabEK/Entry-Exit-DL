@@ -6,7 +6,7 @@
 
 {% block content%}
 
-<h2>Records for {{ date }}</h2>
+<h2 class="text-center">Records for {{ date }}</h2>
 <table class="neon-table">
     <thead>
         <tr>
@@ -26,7 +26,9 @@
     </tbody>
     
     </table>
-    <form method="post">
+    <br>
+
+    <form method="post" class="text-center mt-4 mb-5">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Submit">

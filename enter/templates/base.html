@@ -16,6 +16,19 @@
  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
 
   <style type="text/css">
+    body {
+      background-color: #73c3be;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    h1 {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .navbar-nav > li{
+      padding-left:5px;
+      padding-right:5px;
+    }
     .neon-table {
       width: 100%;
       border-collapse: collapse;
@@ -48,12 +61,8 @@
  
 </head>
 <body>
-    <nav id="topNav" class="navbar navbar-expand-md navbar-light">
-        <div class="container">
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse text-center" id="navbarNav">
+    <nav id="topNav" class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'library' %}">Home</a>
@@ -71,7 +80,7 @@
                 <a class="nav-link active" aria-current="page" href="{% url 'exportbydate' %}">Download records by date</a>
               </li>
             </ul>
-          </div>
+          
         </div>
       </nav>
 {% block content%}
