@@ -25,7 +25,13 @@
       margin-bottom: 20px;
       text-align: center;
     }
-
+    .navbar {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+}
 /* Target the datepicker input field */
 input[type=date] {
     /* Add a background color and padding */
@@ -164,6 +170,9 @@ input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, tex
           
         </div>
       </nav>
+      <br>
+      <br>
+
 {% block content%}
 {% endblock %}
 </body>
