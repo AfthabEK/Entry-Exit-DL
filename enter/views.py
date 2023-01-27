@@ -12,11 +12,13 @@ from django.http import HttpResponse
 
 def library(request):
     message=""
+    x=False
     if request.method == 'POST':
         student_id = request.POST.get('student_id')
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         today = date.today()
+        
         
         try:
             student = record.objects.get(rollno=student_id,status='IN')
@@ -24,14 +26,17 @@ def library(request):
                 student.exittime = current_time
                 student.status = 'OUT'
                 student.save()
-                message="Student with rollno: "+student_id+" has exited the library at "+str(current_time)
+                message="Student with roll number "+student_id+" has exited the library at "+str(current_time)
+                x=False
             else:
                     record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
-                    message="Student with rollno: "+student_id+" has entered the library at "+str(current_time)
+                    message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
+                    x=True
         except record.DoesNotExist:
             record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
-            message="Student with rollno: "+student_id+" has entered the library at "+str(current_time)
-    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message})
+            message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
+            x=True
+    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
 
 
 
