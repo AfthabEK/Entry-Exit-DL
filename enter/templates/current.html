@@ -1,4 +1,12 @@
-<table>
+{% extends 'base.html'%}
+{% load static %}
+{% block title %}
+  Current Records
+{% endblock %}
+
+{% block content%}
+
+<table class="neon-table">
     <thead>
         <tr>
             <th>Roll Number</th>
@@ -14,3 +22,5 @@
         {% endfor %}
     </tbody>
 </table>    
+
+{% endblock %}
