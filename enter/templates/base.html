@@ -25,10 +25,85 @@
       margin-bottom: 20px;
       text-align: center;
     }
+
+/* Target the datepicker input field */
+input[type=date] {
+    /* Add a background color and padding */
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    /* Add border radius and border */
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+    /* Add font styles */
+    font-size: 1rem;
+    font-weight: 400;
+    /* Add box-shadow */
+    box-shadow: 0px 0px 3px 0px #e1e1e1;
+    /* Add a hover effect */
+    transition: all 0.3s ease-in-out;
+}
+
+input[type=date]:hover {
+    /* Change the border and background color on hover */
+    border-color: #007bff;
+    background-color: #e1f5fe;
+}
+
+/* Target the text input fields */
+input[type=text], input[type=password], input[type=email], textarea {
+    /* Add a background color and padding */
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    /* Add border radius and border */
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+    /* Add font styles */
+    font-size: 1rem;
+    font-weight: 400;
+    /* Add box-shadow */
+    box-shadow: 0px 0px 3px 0px #e1e1e1;
+    /* Add a hover effect */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Target the text input fields on focus */
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, textarea:focus {
+    /* Change the border color on focus */
+    border-color: #007bff;
+    /* Add a box-shadow on focus */
+    box-shadow: 0px 0px 3px 0px #007bff;
+    /* Add a outline on focus */
+    outline: none;
+}
+
+/* Target the text input fields on hover */
+input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, textarea:hover {
+    /* Change the border color on hover */
+    border-color: #007bff;
+}
+
+
+
+
     .navbar-nav > li{
       padding-left:5px;
       padding-right:5px;
     }
+
+    .navbar .nav-item {
+  transition: background-color 0.5s ease;
+}
+
+.nav-item{
+  border-radius: 5px;
+}
+
+.navbar .nav-item:hover {
+    background-color: #656f79;
+    color: #000;
+    border-color: #000;
+}
+
     .neon-table {
       width: 100%;
       border-collapse: collapse;

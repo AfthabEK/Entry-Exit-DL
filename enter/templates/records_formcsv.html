@@ -7,10 +7,10 @@
 {% block content%}
 
 <div class="d-flex justify-content-center">
-  <form method="post" class="mx-auto mt-4 mb-5">
+  <form method="post" class="mx-auto mt-4 mb-5 text-center">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Submit">
+    <input type="submit" value="Submit" class="text-center btn btn-dark">
   </form>
 </div>
 
