@@ -6,19 +6,29 @@ from datetime import datetime
 from django.shortcuts import redirect
 from datetime import date
 from django.http import HttpResponse
+import socket
 
-
-
+readerIP='192.168.230.16'
+readerPort=100
 
 def library(request):
     message=""
     x=False
     if request.method == 'POST':
-        student_id = request.POST.get('student_id')
+        student_idx = request.POST.get('student_id')
+        student_id=student_idx.upper()
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         today = date.today()
-        
+        if student_id=="" :
+            try:
+                student_id = readData()
+            except Exception as e:
+                # Handle the exception raised by readData()
+                message = "Error: Failed to read data from the reader. Please try again later."
+                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
+                # You may want to log the error for further investigation
+                # logger.error(f"SocketError: {e}")
         
         try:
             student = record.objects.get(rollno=student_id,status='IN')
@@ -26,7 +36,7 @@ def library(request):
                 student.exittime = current_time
                 student.status = 'OUT'
                 student.save()
-                message="Student with roll number "+student_id+" has exited the library at "+str(current_time)
+                message="Student with roll number " +student_id+" has exited the library at "+str(current_time)
                 x=False
             else:
                     record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
@@ -36,6 +46,7 @@ def library(request):
             record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
             message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
             x=True
+        
     return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
 
 
@@ -111,3 +122,40 @@ def exportbymonth(request):
         return response
     else:
         return render(request, 'records_month_formcsv.html', {'form': MonthForm()})
+    
+
+def readData():
+	try:
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.SOL_TCP)
+		s.connect((readerIP, readerPort))
+	except:
+		raise Exception('NetworkError: Socket creation failed.')
+
+	#print("Sending Read request.")
+	cmd = bytearray([10, 255, 2, 128, 117])
+	s.send(cmd)
+
+	# Reading response
+	out = s.recv(2048)
+	cnt = out[5]
+	#print("Response: " + " ".join("%02x" % b for b in out))
+
+	#print("Sending get tag data request.")
+	cmd = bytearray([10, 255, 3, 65, 16, 163])
+	s.send(cmd)
+
+	# Reading response
+	out = s.recv(2048)
+	#print("Response: " + " ".join("%02x" % b for b in out))
+	if out[4] > 1:
+		raise Exception("WARNING: More than one tags in range!!!")
+	elif out[4] == 0:
+		raise Exception("WARNING: No tags in range!!!")
+	out = out[7:7+12][::-1]
+	if out[1] == 0x9e:
+		raise Exception("WARNING: Attempted to read empty tag.")
+	out = out.decode()
+	out = ''.join([c if ord(c) != 0 else '' for c in out])
+
+	#print(out)
+	return out
