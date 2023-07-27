@@ -17,6 +17,7 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 In the views.py file inside the enter folder, change the readerIP into the required IP address.
+
 ```sh
 python3 manage.py runserver
 ```
