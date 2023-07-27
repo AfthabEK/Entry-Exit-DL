@@ -11,8 +11,9 @@
     {% if message == "" %}
     
     {% else %}
-
-    {% if x %}
+    {% if message == "Error: Failed to read data from the reader. Please try again." %}
+    <div class="text-center" ">
+    {% elif x %}
     <div class="text-center alert alert-success" ">
     {% else %}
     <div class="text-center alert alert-warning" ">

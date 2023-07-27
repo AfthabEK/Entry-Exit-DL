@@ -25,7 +25,7 @@ def library(request):
                 student_id = readData()
             except Exception as e:
                 # Handle the exception raised by readData()
-                message = "Error: Failed to read data from the reader. Please try again later."
+                message = "Error: Failed to read data from the reader. Please try again."
                 return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
                 # You may want to log the error for further investigation
                 # logger.error(f"SocketError: {e}")
@@ -159,3 +159,14 @@ def readData():
 
 	#print(out)
 	return out
+
+
+
+def clear_all_entries():
+    try:
+        record.objects.all().delete()
+        return True
+    except Exception as e:
+        # You may want to log the error for further investigation
+        # logger.error(f"Error occurred while clearing entries: {e}")
+        return False
