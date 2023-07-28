@@ -1,6 +1,6 @@
 ## Entry Exit DL
 
-Entry-Exit Student Data Recording System
+A Django application to record the entry and exit of students into the library by scanning their ID cards using an RFID reader.
 
 ### System Requirements
 
