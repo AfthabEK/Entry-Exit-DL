@@ -1,5 +1,3 @@
-To create a comprehensive README file for your Django project, you should include the following sections:
-
 ## Entry Exit DL
 
 Entry-Exit Student Data Recording System
