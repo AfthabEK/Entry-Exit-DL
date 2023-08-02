@@ -1,7 +1,6 @@
 .neon-table {
     width: 100%;
     border-collapse: collapse;
-    box-shadow: 0 0 20px #000000;
   }
   
   .neon-table th, .neon-table td {
