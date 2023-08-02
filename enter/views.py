@@ -25,7 +25,7 @@ def library(request):
                 student_id = readData()
             except Exception as e:
                 # Handle the exception raised by readData()
-                message = "Error: Failed to read data from the reader. Please try again later."
+                message = "Error: Failed to read data from the reader. Please try again."
                 return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
                 # You may want to log the error for further investigation
                 # logger.error(f"SocketError: {e}")
