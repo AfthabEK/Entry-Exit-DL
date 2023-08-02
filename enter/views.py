@@ -25,7 +25,7 @@ def library(request):
                 student_id = readData()
             except Exception as e:
                 # Handle the exception raised by readData()
-                message = "Error: Failed to read data from the reader. Please try again."
+                message = "Error: Failed to read data from the reader. Please try again later."
                 return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
                 # You may want to log the error for further investigation
                 # logger.error(f"SocketError: {e}")
@@ -39,7 +39,7 @@ def library(request):
                 message="Student with roll number " +student_id+" has exited the library at "+str(current_time)
                 x=False
             else:
-                    record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
+                    record.objects.create(rollno=student_id, entrytime=current_time,date=today)
                     message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
                     x=True
         except record.DoesNotExist:
@@ -157,16 +157,6 @@ def readData():
 	out = out.decode()
 	out = ''.join([c if ord(c) != 0 else '' for c in out])
 
-	#print(out)
+	
 	return out
 
-
-
-def clear_all_entries():
-    try:
-        record.objects.all().delete()
-        return True
-    except Exception as e:
-        # You may want to log the error for further investigation
-        # logger.error(f"Error occurred while clearing entries: {e}")
-        return False

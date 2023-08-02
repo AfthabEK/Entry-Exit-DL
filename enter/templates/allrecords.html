@@ -12,6 +12,7 @@
               <th>Roll Number</th>
               <th>Entry Time</th>
               <th>Exit Time</th>
+              <th>Date</th>
           </tr>
       </thead>
       <tbody>
@@ -20,6 +21,7 @@
               <td>{{ student.rollno }}</td>
               <td>{{ student.entrytime }}</td>
               <td>{{ student.exittime }}</td>
+              <td>{{ student.date|date:'d/m/y' }}</td>
           </tr>
           {% endfor %}
       </tbody>
