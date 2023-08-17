@@ -9,6 +9,7 @@
   <table class="neon-table">
       <thead>
           <tr>
+              <th>Index</th>
               <th>Roll Number</th>
               <th>Entry Time</th>
               <th>Exit Time</th>
@@ -18,6 +19,7 @@
       <tbody>
           {% for student in students %}
           <tr>
+              <td>{{ forloop.counter }}</td>
               <td>{{ student.rollno }}</td>
               <td>{{ student.entrytime }}</td>
               <td>{{ student.exittime }}</td>

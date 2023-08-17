@@ -12,9 +12,14 @@ readerIP='192.168.230.16'
 readerPort=100
 
 def library(request):
+    count=record.objects.filter(status='IN').count()
+    #total visits today
+    today = date.today()
+    total_visits_today = record.objects.filter(date=today).count()
     message=""
     x=False
     if request.method == 'POST':
+        
         student_idx = request.POST.get('student_id')
         student_id=student_idx.upper()
         now = datetime.now()
@@ -26,7 +31,9 @@ def library(request):
             except Exception as e:
                 # Handle the exception raised by readData()
                 message = "Error: Failed to read data from the reader. Please try again."
-                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
+                count=record.objects.filter(status='IN').count()
+                total_visits_today = record.objects.filter(date=today).count()
+                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today})
                 # You may want to log the error for further investigation
                 # logger.error(f"SocketError: {e}")
         
@@ -38,24 +45,35 @@ def library(request):
                 student.save()
                 message="Student with roll number " +student_id+" has exited the library at "+str(current_time)
                 x=False
+                total_visits_today = record.objects.filter(date=today).count()
+                count=record.objects.filter(status='IN').count()
             else:
+                    count=record.objects.filter(status='IN').count()
                     record.objects.create(rollno=student_id, entrytime=current_time,date=today)
                     message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
                     x=True
+                    total_visits_today = record.objects.filter(date=today).count()
+                    count=record.objects.filter(status='IN').count()
         except record.DoesNotExist:
+            
             record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
             message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
             x=True
+            total_visits_today = record.objects.filter(date=today).count()
+            count=record.objects.filter(status='IN').count()
         
-    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x})
+    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today})
 
-
+def records_today(request):
+    today = date.today()
+    students = record.objects.filter(date=today).order_by('-entrytime')
+    return render(request, 'records_today.html', {'students': students})
 
 
 
 #show all records
 def allrecords(request):
-    students = record.objects.all()
+    students = record.objects.all().order_by('-entrytime')
     form = DateForm(request.POST)
     return render(request, 'allrecords.html', {'students': students, 'form': form})
 

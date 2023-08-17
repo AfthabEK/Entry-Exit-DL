@@ -1,0 +1,32 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %}
+  Records for Today
+{% endblock %}
+{% block content%}
+<br>
+<h2 class="text-center">Records for Today</h2>
+<table class="neon-table">
+    <thead>
+        <tr>
+            <th>Index</th>
+            <th>Roll Number</th>
+            <th>Entry Time</th>
+            <th>Exit Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ student.rollno }}</td>
+            <td>{{ student.entrytime }}</td>
+            <td>{{ student.exittime }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+    </table>
+    <br>
+{% endblock %}
+```
