@@ -7,7 +7,7 @@ A Django application to record the entry and exit of students into the library b
 - Python 3.7 or above
 - Git
 - RFID Reader with compatible RFID cards
-- Ubuntu (for Linux installation) or Windows (for Windows installation)
+- Ubuntu 20.04 or higher (for Linux installation) or Windows 10/11 (for Windows installation)
 - Access to the same network for both the server and the RFID reader
 
 ### Installation
@@ -124,6 +124,10 @@ To add the usage instructions and additional information to the README file, you
 
    ![Current Records](screenshots/current_records.png)
 
+6. To view the list of students who entered today, click on the "Records for Today" link from the navigation menu.
+
+   ![Records for Today](screenshots/records_today.png)
+
 6. To view the list of students on a specific day, click on the "View by Date" link from the navigation menu.
 
 7. To view the list of students for a specific month, click on the "View by Month" link from the navigation menu.
@@ -136,5 +140,11 @@ To add the usage instructions and additional information to the README file, you
 
 To clear the database and delete all data, run the `clear.py` script. **Warning**: Make sure to backup data by downloading it before running this script.
 
+### Notes
+This software was made for the [eSSL U-5 RFID reader](https://www.esslsecurity.com/rfidreaders/u-5).
+![eSSL U-5 RFID reader](screenshots/essl-u5.jpg)
+ If you are using a different device, please make sure to modify the readData
+function in [views.py](/enter/views.py).
+
 ## Contribution
-Contributions are always welcome! Feel free to create a pull request, and I'll review it promptly. Your help is much appreciated!
+Contributions are always welcome! Feel free to create a pull request, and I'll review it promptly.
