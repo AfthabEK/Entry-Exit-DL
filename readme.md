@@ -142,7 +142,6 @@ To clear the database and delete all data, run the `clear.py` script. **Warning*
 
 ### Notes
 This software was made for the [eSSL U-5 RFID reader](https://www.esslsecurity.com/rfidreaders/u-5).
-![eSSL U-5 RFID reader](screenshots/essl-u5.jpg)
  If you are using a different device, please make sure to modify the readData
 function in [views.py](/enter/views.py).
 
