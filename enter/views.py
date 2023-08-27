@@ -13,7 +13,7 @@ readerIP='192.168.230.16'
 readerPort=100
 
 def library(request):
-    count=record.objects.filter(status='IN').count()
+    count=record.objects.filter(status='IN',date=today).count()
     #total visits today
     today = date.today()
     total_visits_today = record.objects.filter(date=today).count()
@@ -149,7 +149,7 @@ def read_data_with_retry():
         try:
             student_id = readData()
             if student_id:
-                return student_id  # Return the data if successfully read
+                return student_id[1:]  # Return the data if successfully read
         except Exception as e:
             pass
     return None  
