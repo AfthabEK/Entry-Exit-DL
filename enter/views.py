@@ -13,9 +13,9 @@ readerIP='192.168.230.16'
 readerPort=100
 
 def library(request):
+    today = date.today()
     count=record.objects.filter(status='IN',date=today).count()
     #total visits today
-    today = date.today()
     total_visits_today = record.objects.filter(date=today).count()
     message=""
     x=False
