@@ -90,22 +90,17 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
-### Usage
+## Usage
 
 1. Ensure the RFID reader is connected and accessible on the same network as the server.
 
+2. Put the card on the RFID reader.
 
-To add the usage instructions and additional information to the README file, you can include the following sections:
-
-## Usage
-
-1. Put the card on the RFID reader.
-
-2. Open your web browser and go to `localhost:8000` or `http://your-server-ip:8000`.
+3. Open your web browser and go to `localhost:8000` or `http://your-server-ip:8000`.
 
    ![Homepage](screenshots/homepage.png)
 
-3. Click on the "Submit" button after the RFID reader successfully reads the card.
+4. Click on the "Submit" button after the RFID reader successfully reads the card.
 
    - Successful Read and Student Entry:
    ![Successful Entry](screenshots/entry_success.png)
@@ -116,25 +111,25 @@ To add the usage instructions and additional information to the README file, you
    - Failed Read:
    ![Failed Read](screenshots/failed_read.png)
 
-4. To view all records, click on the "View Records" link from the navigation menu.
+5. To view all records, click on the "View Records" link from the navigation menu.
 
    ![View Records](screenshots/view_records.png)
 
-5. To see the list of students currently inside, click on the "Current Records" link from the navigation menu.
+6. To see the list of students currently inside, click on the "Current Records" link from the navigation menu.
 
    ![Current Records](screenshots/current_records.png)
 
-6. To view the list of students who entered today, click on the "Records for Today" link from the navigation menu.
+7. To view the list of students who entered today, click on the "Records for Today" link from the navigation menu.
 
    ![Records for Today](screenshots/records_today.png)
 
-6. To view the list of students on a specific day, click on the "View by Date" link from the navigation menu.
+8. To view the list of students on a specific day, click on the "View by Date" link from the navigation menu.
 
-7. To view the list of students for a specific month, click on the "View by Month" link from the navigation menu.
+9. To view the list of students for a specific month, click on the "View by Month" link from the navigation menu.
 
-8. To download student data for a specific date, click on the "Download by Date" link from the navigation menu.
+10. To download student data for a specific date, click on the "Download by Date" link from the navigation menu.
 
-9. To download student data for a specific month, click on the "Download by Month" link from the navigation menu.
+11. To download student data for a specific month, click on the "Download by Month" link from the navigation menu.
 
 ### Admin Tasks
 

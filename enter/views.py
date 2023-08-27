@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from datetime import date
 from django.http import HttpResponse
 import socket
+import time
 
 readerIP='192.168.230.16'
 readerPort=100
@@ -25,10 +26,9 @@ def library(request):
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         today = date.today()
-        if student_id=="" :
-            try:
-                student_id = readData()
-            except Exception as e:
+        if student_id == "":
+            student_id = read_data_with_retry()
+            if student_id is None:
                 # Handle the exception raised by readData()
                 message = "Error: Failed to read data from the reader. Please try again."
                 count=record.objects.filter(status='IN').count()
@@ -141,6 +141,18 @@ def exportbymonth(request):
     else:
         return render(request, 'records_month_formcsv.html', {'form': MonthForm()})
     
+
+
+def read_data_with_retry():
+    start_time = time.time()
+    while time.time() - start_time < 5:
+        try:
+            student_id = readData()
+            if student_id:
+                return student_id  # Return the data if successfully read
+        except Exception as e:
+            pass
+    return None  
 
 def readData():
 	try:
