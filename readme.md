@@ -90,6 +90,31 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
+
+#### Docker
+1. Install Docker on your system. Refer to the official documentation for instructions: https://docs.docker.com/get-docker/
+
+2. Clone the repository:
+
+```bash
+git clone https://github.com/AfthabEK/Entry-Exit-DL.git
+cd Entry-Exit-DL
+```
+
+3. Build the Docker image:
+
+```bash
+docker build -t entry-exit-dl .
+```
+
+4. Run the Docker container:
+
+```bash
+docker run -d -p 8000:8000 entry-exit-dl
+```   
+
+
+
 ## Usage
 
 1. Ensure the RFID reader is connected and accessible on the same network as the server.
