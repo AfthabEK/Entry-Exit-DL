@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  View by Shifts
+{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<table class="neon-table">
+    <thead>
+        <tr>
+            <th>Morning 00:00 - 08:00</th>
+            <th>General 08:00 - 16:30</th> 
+            <th>Night 16:30 - 00:00</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>{{ morning_count }}</p>
+            </td>
+            <td>
+                <p>{{ general_count }}</p>
+            </td>
+            <td>
+                <p>{{ night_count }}</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<br>
+<br>
+
+<!-- Date form here -->
+<div class=""> 
+    <form method="post" class="text-center mt-4 mb-5" >
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit" class="text-center btn btn-dark">
+    </form>
+</div>
+
+<br>
+{% endblock %}
+

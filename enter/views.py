@@ -19,6 +19,9 @@ def library(request):
     total_visits_today = record.objects.filter(date=today).count()
     message=""
     x=False
+    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
+    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
+    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
     if request.method == 'POST':
         
         student_idx = request.POST.get('student_id')
@@ -33,7 +36,8 @@ def library(request):
                 message = "Error: Failed to read data from the reader. Please try again."
                 count=record.objects.filter(status='IN').count()
                 total_visits_today = record.objects.filter(date=today).count()
-                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today})
+                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,
+                                                        'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
                 # You may want to log the error for further investigation
                 # logger.error(f"SocketError: {e}")
         
@@ -62,7 +66,7 @@ def library(request):
             total_visits_today = record.objects.filter(date=today).count()
             count=record.objects.filter(status='IN').count()
         
-    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today})
+    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
 
 def records_today(request):
     today = date.today()
@@ -189,7 +193,20 @@ def readData():
 		raise Exception("WARNING: Attempted to read empty tag.")
 	out = out.decode()
 	out = ''.join([c if ord(c) != 0 else '' for c in out])
-
-	
+     
 	return out
 
+
+def shifts(request):
+    if request.method == 'GET':
+        morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00').count()
+        general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00').count()
+        night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59').count()
+        return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night,'form': DateForm()})
+    else:
+         date = request.POST.get('date')
+         morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=date).count()
+         general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=date).count()
+         night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date).count()
+         return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night, 'date': date,'form': DateForm()})
+         

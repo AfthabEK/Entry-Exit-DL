@@ -29,4 +29,40 @@
       <h2 class="text-center">Number of Students Inside: {{count}}</h2>    
       <h2 class="text-center">Total Visits Today: {{total_visits_today}}</h2>
 
+    <br>
+    <br>
+    <br>
+
+    <table class="neon-table">
+      <thead>
+          <tr>
+              <th>Morning 00:00 - 08:00</th>
+              <th>General 08:00 - 16:30</th> 
+              <th>Night 16:30 - 00:00</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td>
+                  <p>{{ morning_count }}</p>
+              </td>
+              <td>
+                  <p>{{ general_count }}</p>
+              </td>
+              <td>
+                  <p>{{ night_count }}</p>
+              </td>
+          </tr>
+      </tbody>
+  </table>
+
+
+
+
+
+
+
+
+
+
 {% endblock %}
