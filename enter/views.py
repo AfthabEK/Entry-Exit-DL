@@ -56,7 +56,7 @@ def library(request):
                     count=record.objects.filter(status='IN').count()
         except record.DoesNotExist:
             
-            record.objects.create(rollno=student_id, entrytime=datetime.now(),date=today)
+            record.objects.create(rollno=student_id, entrytime=current_time,date=today)
             message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
             x=True
             total_visits_today = record.objects.filter(date=today).count()
@@ -108,6 +108,9 @@ def export(request):
     writer = csv.writer(response)
     writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
     for row in record.objects.all().values_list('rollno', 'entrytime', 'exittime', 'date'):
+        row = list(row)  # Convert the values_list tuple to a list
+        if row[1]:  # Check if entry time is not None
+            row[1] = row[1].strftime('%H:%M:%S')  # Format entry time without milliseconds
         writer.writerow(row)
     response['Content-Disposition'] = 'attachment; filename="records.csv"'
     return response
