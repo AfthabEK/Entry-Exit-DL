@@ -5,10 +5,13 @@
 {% endblock %}
 
 {% block content%}
+<br>
+<br>
 <h1 class="text-center">Current Records</h1>
 <table class="neon-table">
     <thead>
         <tr>
+            <th>Index</th>
             <th>Roll Number</th>
             <th>Entry Time</th>
         </tr>
@@ -16,6 +19,7 @@
     <tbody>
         {% for student in students %}
         <tr>
+            <td>{{ forloop.counter }}</td>
             <td>{{ student.rollno }}</td>
             <td>{{ student.entrytime }}</td>
         </tr>

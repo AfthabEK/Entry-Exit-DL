@@ -103,7 +103,6 @@ def allrecords(request):
 def records(request):
     if request.method == 'POST':
         date = request.POST.get('date')
-        
         students = record.objects.filter(date=date)
         return render(request, 'records.html', {'students': students, 'form': DateForm(),'date': date})
     return render(request, 'records_form.html', {'form': DateForm()})
@@ -134,7 +133,7 @@ def export(request):
         if row[1]:  # Check if entry time is not None
             row[1] = row[1].strftime('%H:%M:%S')  # Format entry time without milliseconds
         writer.writerow(row)
-    response['Content-Disposition'] = 'attachment; filename="records.csv"'
+    response['Content-Disposition'] = 'attachment; filename="allrecords.csv"'
     return response
 
 # view to export records of a particular date to csv
@@ -144,9 +143,9 @@ def exportbydate(request):
         response = HttpResponse(content_type='text/csv')
         writer = csv.writer(response)
         writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
-        for row in record.objects.filter(date=date).values_list('rollno', 'entrytime', 'exittime'):
+        for row in record.objects.filter(date=date).values_list('rollno', 'entrytime', 'exittime','date'):
             writer.writerow(row)
-        response['Content-Disposition'] = 'attachment; filename="records.csv"'
+        response['Content-Disposition'] = 'attachment; filename="{0}.csv"'.format(date)
         return response
     else:
         return render(request, 'records_formcsv.html', {'form': DateForm()})
@@ -154,14 +153,18 @@ def exportbydate(request):
 # view to export records of a particular month to csv
 def exportbymonth(request):
     if request.method == 'POST':
-        month = request.POST.get('month')
-        month = int(month[5:7])
+        date = request.POST.get('month')
+        
+        year=date[0:4]
+        month = int(date[5:7])
+        monthname = datetime.strptime(date, '%Y-%m-%d').strftime('%B')
+        yearname=str(year)
         response = HttpResponse(content_type='text/csv')
         writer = csv.writer(response)
         writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
-        for row in record.objects.filter(date__month=month).values_list('rollno', 'entrytime', 'exittime'):
+        for row in record.objects.filter(date__month=month,date__year=year).values_list('rollno', 'entrytime', 'exittime', 'date'):
             writer.writerow(row)
-        response['Content-Disposition'] = 'attachment; filename="records.csv"'
+        response['Content-Disposition'] = 'attachment; filename="{0}.csv"'.format(monthname+' '+yearname)
         return response
     else:
         return render(request, 'records_month_formcsv.html', {'form': MonthForm()})
