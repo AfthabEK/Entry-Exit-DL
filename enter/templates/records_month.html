@@ -7,7 +7,7 @@
 {% block content%}
 <br>
 <br>
-<h2 class="text-center">Records for {{ monthname }}</h2>
+<h2 class="text-center">Records for {{ monthname }} {{year}}</h2>
 <table class="neon-table">
     <thead>
         <tr>
@@ -15,6 +15,7 @@
             <th>Roll Number</th>
             <th>Entry Time</th>
             <th>Exit Time</th>
+            <th>Date</th>
         </tr>
     </thead>
     <tbody>
@@ -23,7 +24,8 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ student.rollno }}</td>
             <td>{{ student.entrytime }}</td>
-            <td>{{ student.exittime }}</td>
+            <td>{{ student.exittime|default:'--:--' }}</td>
+            <td>{{ student.date|date:'d/m/y' }}</td>
         </tr>
         {% endfor %}
     </tbody>

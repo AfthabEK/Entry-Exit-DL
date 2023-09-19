@@ -24,7 +24,7 @@
               <td>{{ forloop.counter }}</td>
               <td>{{ student.rollno }}</td>
               <td>{{ student.entrytime }}</td>
-              <td>{{ student.exittime }}</td>
+              <td>{{ student.exittime|default:'--:--' }}</td>
               <td>{{ student.date|date:'d/m/y' }}</td>
           </tr>
           {% endfor %}

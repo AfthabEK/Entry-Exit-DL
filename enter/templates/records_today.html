@@ -22,7 +22,8 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ student.rollno }}</td>
             <td>{{ student.entrytime }}</td>
-            <td>{{ student.exittime }}</td>
+            <td>{{ student.exittime|default:'--:--' }}</td>
+
         </tr>
         {% endfor %}
     </tbody>

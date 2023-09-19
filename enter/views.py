@@ -13,79 +13,74 @@ readerIP='192.168.230.16'
 readerPort=100
 
 def library(request):
+    # Get the current date and yesterday's date
     today = date.today()
-    count=record.objects.filter(status='IN',date=today).count()
-    #total visits today
+    yesterday = datetime.now().date() - timedelta(days=1)
+
+    # Update entries with status 'IN' and date before or equal to yesterday
+    record.objects.filter(status='IN', date__lte=yesterday, exittime__isnull=True).update(exittime='23:30:00', status='OUT')
+
+
+    # Count the number of students with 'IN' status for today
+    count = record.objects.filter(status='IN', date=today).count()
+
+    # Count total visits today
     total_visits_today = record.objects.filter(date=today).count()
-    message=""
-    x=False
-    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
-    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
-    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
+
+    message = ""
+    x = False
+
+    # Separate counts for different shifts
+    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=today).count()
+    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=today).count()
+    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=today).count()
+
     if request.method == 'POST':
-        
         student_idx = request.POST.get('student_id')
-        student_id=student_idx.upper()
+        student_id = student_idx.upper()
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
-        today = date.today()
+
         if student_id == "":
             student_id = read_data_with_retry()
             if student_id is None:
-                # Handle the exception raised by readData()
                 message = "Error: Failed to read data from the reader. Please try again."
-                count=record.objects.filter(status='IN').count()
-                total_visits_today = record.objects.filter(date=today).count()
-                morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
-                general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
-                night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
-                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,
-                                                        'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
-                # You may want to log the error for further investigation
-                # logger.error(f"SocketError: {e}")
-        
-        try:
+        else:
+            try:
+                # Check if student_id is in the correct format (e.g., B200719CS)
+                if len(student_id) != 9 or not student_id[0].isalpha() or not student_id[1:7].isdigit() or not student_id[7:9].isalpha():
+                    message = "Error: Invalid roll number format. Please try again."
+                else:
+                    student = record.objects.get(rollno=student_id, status='IN')
 
-            #check is student_id is of the format B200719CS 
-            if len(student_id) != 9 or (student_id[0].isalpha() is False) or student_id[1:7].isdigit() is False or student_id[7:9].isalpha() is False:
-                message = "Error: Invalid roll number. Please try again."
-                count=record.objects.filter(status='IN').count()
-                total_visits_today = record.objects.filter(date=today).count()
-                morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
-                general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
-                night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
-                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,
-                                                        'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
-            student = record.objects.get(rollno=student_id,status='IN')
-            if student.exittime is None:
-                student.exittime = current_time
-                student.status = 'OUT'
-                student.save()
-                message="Student with roll number " +student_id+" has exited the library at "+str(current_time)
-                x=False
-                total_visits_today = record.objects.filter(date=today).count()
-                count=record.objects.filter(status='IN').count()
-            else:
-                    count=record.objects.filter(status='IN').count()
-                    record.objects.create(rollno=student_id, entrytime=current_time,date=today)
-                    message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
-                    x=True
-                    total_visits_today = record.objects.filter(date=today).count()
-                    count=record.objects.filter(status='IN').count()
-        except record.DoesNotExist:
-            
-            record.objects.create(rollno=student_id, entrytime=current_time,date=today)
-            message="Student with roll number "+student_id+" has entered the library at "+str(current_time)
-            x=True
-            total_visits_today = record.objects.filter(date=today).count()
-            count=record.objects.filter(status='IN').count()
-   
+                    if student.exittime is None:
+                        student.exittime = current_time
+                        student.status = 'OUT'
+                        student.save()
+                        message = f"Student with roll number {student_id} has exited the library at {current_time}"
+                    else:
+                        # Create a new record for a student entering
+                        x=True
+                        record.objects.create(rollno=student_id, entrytime=current_time, date=today)
+                        message = f"Student with roll number {student_id} has entered the library at {current_time}"
+            except record.DoesNotExist:
+                # Create a new record for a student entering
+                x=True
+                record.objects.create(rollno=student_id, entrytime=current_time, date=today)
+                message = f"Student with roll number {student_id} has entered the library at {current_time}"
 
-    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
-    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
-    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
-    return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
+    return render(request, 'library.html', {
+        'form': StudentEntryExitForm(),
+        'message': message,
+        'x': x,
+        'count': count,
+        'total_visits_today': total_visits_today,
+        'morning_count': morning,
+        'general_count': general,
+        'night_count': night
+    })
 
+# view to display records of today
 def records_today(request):
     today = date.today()
     students = record.objects.filter(date=today).order_by('-entrytime')
@@ -95,7 +90,7 @@ def records_today(request):
 
 #show all records
 def allrecords(request):
-    students = record.objects.all().order_by('-entrytime')
+    students = record.objects.all().order_by('-date','-entrytime')
     form = DateForm(request.POST)
     return render(request, 'allrecords.html', {'students': students, 'form': form})
 
@@ -103,7 +98,7 @@ def allrecords(request):
 def records(request):
     if request.method == 'POST':
         date = request.POST.get('date')
-        students = record.objects.filter(date=date)
+        students = record.objects.filter(date=date).order_by('-date','-entrytime')
         return render(request, 'records.html', {'students': students, 'form': DateForm(),'date': date})
     return render(request, 'records_form.html', {'form': DateForm()})
 
@@ -112,15 +107,16 @@ def recordsbymonth(request):
     if request.method == 'POST':
         month = request.POST.get('month')
         monthname = datetime.strptime(month, '%Y-%m-%d').strftime('%B')
+        year = int(month[0:4])
         month = int(month[5:7])
-        students = record.objects.filter(date__month=month)
-        return render(request, 'records_month.html', {'students': students, 'form': MonthForm,'month': month, 'monthname': monthname})
+        students = record.objects.filter(date__month=month,date__year=year).order_by('-date','-entrytime')
+        return render(request, 'records_month.html', {'students': students, 'form': MonthForm,'month': month, 'monthname': monthname, 'year': year})
     return render(request, 'records_month_form.html', {'form': MonthForm()})
 
 
 # view to display records by status
 def recordsbystatus(request):
-        students = record.objects.filter(status='IN')
+        students = record.objects.filter(status='IN').order_by('-date','-entrytime')
         return render(request, 'current.html', {'students': students})
 
 # view to export records to csv
@@ -128,7 +124,7 @@ def export(request):
     response = HttpResponse(content_type='text/csv')
     writer = csv.writer(response)
     writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
-    for row in record.objects.all().values_list('rollno', 'entrytime', 'exittime', 'date'):
+    for row in record.objects.all().values_list('rollno', 'entrytime', 'exittime', 'date').order_by('-date','-entrytime'):
         row = list(row)  # Convert the values_list tuple to a list
         if row[1]:  # Check if entry time is not None
             row[1] = row[1].strftime('%H:%M:%S')  # Format entry time without milliseconds
@@ -143,7 +139,7 @@ def exportbydate(request):
         response = HttpResponse(content_type='text/csv')
         writer = csv.writer(response)
         writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
-        for row in record.objects.filter(date=date).values_list('rollno', 'entrytime', 'exittime','date'):
+        for row in record.objects.filter(date=date).values_list('rollno', 'entrytime', 'exittime','date').order_by('-date','-entrytime'):
             writer.writerow(row)
         response['Content-Disposition'] = 'attachment; filename="{0}.csv"'.format(date)
         return response
@@ -162,7 +158,7 @@ def exportbymonth(request):
         response = HttpResponse(content_type='text/csv')
         writer = csv.writer(response)
         writer.writerow(['Roll No', 'Entry Time', 'Exit Time', 'Date'])
-        for row in record.objects.filter(date__month=month,date__year=year).values_list('rollno', 'entrytime', 'exittime', 'date'):
+        for row in record.objects.filter(date__month=month,date__year=year).values_list('rollno', 'entrytime', 'exittime', 'date').order_by('-date','-entrytime'):
             writer.writerow(row)
         response['Content-Disposition'] = 'attachment; filename="{0}.csv"'.format(monthname+' '+yearname)
         return response
