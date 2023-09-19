@@ -4,7 +4,7 @@ from .models import record
 from .forms import StudentEntryExitForm, DateForm, MonthForm
 from datetime import datetime
 from django.shortcuts import redirect
-from datetime import date
+from datetime import date, timedelta
 from django.http import HttpResponse
 import socket
 import time
@@ -65,7 +65,14 @@ def library(request):
             x=True
             total_visits_today = record.objects.filter(date=today).count()
             count=record.objects.filter(status='IN').count()
-        
+   
+    yesterday = today - timedelta(days=1)
+    studentx = record.objects.filter(date=yesterday, status='IN')
+    for student in studentx:
+        #mark exit time as 23:59:59
+        student.exittime = '23:59:59'
+        student.status = 'OUT'
+        student.save()
     return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
 
 def records_today(request):
@@ -210,3 +217,5 @@ def shifts(request):
          night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date).count()
          return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night, 'date': date,'form': DateForm()})
          
+
+
