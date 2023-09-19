@@ -12,8 +12,8 @@
     {% if message == "" %}
     
     {% else %}
-    {% if message == "Error: Failed to read data from the reader. Please try again." %}
-    <div class="text-center" ">
+    {% if message == "Error: Failed to read data from the reader. Please try again." or message == "Error: Invalid roll number. Please try again." %}
+    <div class="text-center alert alert-danger" ">
     {% elif x %}
     <div class="text-center alert alert-success" ">
     {% else %}

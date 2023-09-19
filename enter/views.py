@@ -36,12 +36,26 @@ def library(request):
                 message = "Error: Failed to read data from the reader. Please try again."
                 count=record.objects.filter(status='IN').count()
                 total_visits_today = record.objects.filter(date=today).count()
+                morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
+                general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
+                night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
                 return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,
                                                         'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
                 # You may want to log the error for further investigation
                 # logger.error(f"SocketError: {e}")
         
         try:
+
+            #check is student_id is of the format B200719CS 
+            if len(student_id) != 9 or (student_id[0].isalpha() is False) or student_id[1:7].isdigit() is False or student_id[7:9].isalpha() is False:
+                message = "Error: Invalid roll number. Please try again."
+                count=record.objects.filter(status='IN').count()
+                total_visits_today = record.objects.filter(date=today).count()
+                morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
+                general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
+                night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
+                return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,
+                                                        'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
             student = record.objects.get(rollno=student_id,status='IN')
             if student.exittime is None:
                 student.exittime = current_time
@@ -66,13 +80,10 @@ def library(request):
             total_visits_today = record.objects.filter(date=today).count()
             count=record.objects.filter(status='IN').count()
    
-    yesterday = today - timedelta(days=1)
-    studentx = record.objects.filter(date=yesterday, status='IN')
-    for student in studentx:
-        #mark exit time as 23:59:59
-        student.exittime = '23:59:59'
-        student.status = 'OUT'
-        student.save()
+
+    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00',date=today).count()
+    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00',date=today).count()
+    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59',date=today).count()
     return render(request, 'library.html', {'form': StudentEntryExitForm(),'message':message,'x':x,'count':count,'total_visits_today':total_visits_today,'morning_count':morning,'general_count':general,'night_count':night})
 
 def records_today(request):
