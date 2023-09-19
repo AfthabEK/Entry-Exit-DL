@@ -45,29 +45,29 @@ def library(request):
             student_id = read_data_with_retry()
             if student_id is None:
                 message = "Error: Failed to read data from the reader. Please try again."
-        else:
-            try:
+        
+        try:
                 # Check if student_id is in the correct format (e.g., B200719CS)
-                if len(student_id) != 9 or not student_id[0].isalpha() or not student_id[1:7].isdigit() or not student_id[7:9].isalpha():
+            if len(student_id) != 9 or not student_id[0].isalpha() or not student_id[1:7].isdigit() or not student_id[7:9].isalpha():
                     message = "Error: Invalid roll number format. Please try again."
-                else:
-                    student = record.objects.get(rollno=student_id, status='IN')
+            else:
+                student = record.objects.get(rollno=student_id, status='IN')
 
-                    if student.exittime is None:
-                        student.exittime = current_time
-                        student.status = 'OUT'
-                        student.save()
-                        message = f"Student with roll number {student_id} has exited the library at {current_time}"
-                    else:
+                if student.exittime is None:
+                    student.exittime = current_time
+                    student.status = 'OUT'
+                    student.save()
+                    message = f"Student with roll number {student_id} has exited the library at {current_time}"
+                else:
                         # Create a new record for a student entering
-                        x=True
-                        record.objects.create(rollno=student_id, entrytime=current_time, date=today)
-                        message = f"Student with roll number {student_id} has entered the library at {current_time}"
-            except record.DoesNotExist:
+                    x=True
+                    record.objects.create(rollno=student_id, entrytime=current_time, date=today)
+                    message = f"Student with roll number {student_id} has entered the library at {current_time}"
+        except record.DoesNotExist:
                 # Create a new record for a student entering
-                x=True
-                record.objects.create(rollno=student_id, entrytime=current_time, date=today)
-                message = f"Student with roll number {student_id} has entered the library at {current_time}"
+            x=True
+            record.objects.create(rollno=student_id, entrytime=current_time, date=today)
+            message = f"Student with roll number {student_id} has entered the library at {current_time}"
 
     return render(request, 'library.html', {
         'form': StudentEntryExitForm(),
