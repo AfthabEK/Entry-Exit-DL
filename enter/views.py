@@ -1,6 +1,7 @@
 import datetime,csv
 from django.shortcuts import render
 from .models import record
+from .models import student as studentrec
 from .forms import StudentEntryExitForm, DateForm, MonthForm
 from datetime import datetime
 from django.shortcuts import redirect
@@ -57,18 +58,31 @@ def library(request):
                     student.exittime = current_time
                     student.status = 'OUT'
                     student.save()
-                    message = f"Student with roll number {student_id} has exited the library at {current_time}"
+                    #if there is a name and rollno in the table students, change the message to the name
+                    try:
+                        student_name = studentrec.objects.get(rollno=student_id)
+                        message = f"{student_name} has exited the library at {current_time}"
+                    except:
+                        message = f"Student with roll number {student_id} has exited the library at {current_time}"
                 else:
                         # Create a new record for a student entering
                     x=True
                     record.objects.create(rollno=student_id, entrytime=current_time, date=today)
-                    message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                    try:
+                        student_name = studentrec.objects.get(rollno=student_id)
+                        message = f"{student_name} has entered the library at {current_time}"
+                    except:
+                        message = f"Student with roll number {student_id} has entered the library at {current_time}"
         except record.DoesNotExist:
                 # Create a new record for a student entering
             x=True
             record.objects.create(rollno=student_id, entrytime=current_time, date=today)
-            message = f"Student with roll number {student_id} has entered the library at {current_time}"
-
+            try:
+                student_name = studentrec.objects.get(rollno=student_id)
+                message = f"{student_name} has entered the library at {current_time}"
+            except:
+                print("no name")
+                message = f"Student with roll number {student_id} has entered the library at {current_time}"
     return render(request, 'library.html', {
         'form': StudentEntryExitForm(),
         'message': message,
