@@ -13,6 +13,7 @@ import time
 readerIP='192.168.230.16'
 readerPort=100
 
+
 def library(request):
     # Get the current date and yesterday's date
     today = date.today()
@@ -46,10 +47,22 @@ def library(request):
             student_id = read_data_with_retry()
             if student_id is None:
                 message = "Error: Failed to read data from the reader. Please try again."
+                return render(request, 'library.html', {
+                    'form': StudentEntryExitForm(),
+                    'message': message,
+                    'x': x,
+                    'count': count,
+                    'total_visits_today': total_visits_today,
+                    'morning_count': morning,
+                    'general_count': general,
+                    'night_count': night
+                })
         
         try:
                 # Check if student_id is in the correct format (e.g., B200719CS)
-            if len(student_id) != 9 or not student_id[0].isalpha() or not student_id[1:7].isdigit() or not student_id[7:9].isalpha():
+            
+            if student_id==None or not( isnine(student_id) or isfour(student_id) ):
+            #if student_id==None or not( len(student_id)==9 or len(student_id)==4 ) or not student_id[0].isalpha() or not student_id[1:7].isdigit() or not student_id[7:9].isalpha():
                     message = "Error: Invalid roll number format. Please try again."
             else:
                 student = record.objects.get(rollno=student_id, status='IN')
@@ -63,7 +76,10 @@ def library(request):
                         student_name = studentrec.objects.get(rollno=student_id)
                         message = f"{student_name} has exited the library at {current_time}"
                     except:
-                        message = f"Student with roll number {student_id} has exited the library at {current_time}"
+                        if(len(student_id)==9):
+                            message = f"Student with roll number {student_id} has exited the library at {current_time}"
+                        else:
+                            message = f"Staff with ID {student_id} has exited the library at {current_time}"
                 else:
                         # Create a new record for a student entering
                     x=True
@@ -72,7 +88,10 @@ def library(request):
                         student_name = studentrec.objects.get(rollno=student_id)
                         message = f"{student_name} has entered the library at {current_time}"
                     except:
-                        message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                        if(len(student_id)==9):
+                            message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                        else:
+                            message = f"Staff with ID {student_id} has entered the library at {current_time}"
         except record.DoesNotExist:
                 # Create a new record for a student entering
             x=True
@@ -81,8 +100,10 @@ def library(request):
                 student_name = studentrec.objects.get(rollno=student_id)
                 message = f"{student_name} has entered the library at {current_time}"
             except:
-                print("no name")
-                message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                if(len(student_id)==9):
+                    message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                else:
+                    message = f"Staff with ID {student_id} has entered the library at {current_time}"
     return render(request, 'library.html', {
         'form': StudentEntryExitForm(),
         'message': message,
@@ -243,3 +264,15 @@ def shifts(request):
          
 
 
+def isnine(s):
+    if len(s)==9 and s[0].isalpha() and s[1:7].isdigit() and s[7:9].isalpha():
+        return True
+    else:
+        return False
+    
+
+def isfour(s):
+    if len(s)==4 and s[0:3].isdigit():
+        return True
+    else:
+        return False

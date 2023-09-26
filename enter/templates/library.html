@@ -4,29 +4,29 @@
   Home
 {% endblock %}
 
-{% block content%}
+{% block content %}
     <br>
     <br>
     <h1 class="text-center">Central Library Entry-Exit System</h1>
     <!-- make the message green when it is an entry and red when it is exit-->
-    
 
     <h2 class="text-center text-black-50">Place your ID card on the reader and click Submit</h2>
     {% if message == "" %}
     
     {% else %}
     {% if message == "Error: Failed to read data from the reader. Please try again." or message == "Error: Invalid roll number format. Please try again." %}
-    <div class="text-center alert alert-danger" ">
+    <div class="text-center alert alert-danger">
     {% elif x %}
-    <div class="text-center alert alert-success" ">
+    <div class="text-center alert alert-success">
     {% else %}
-    <div class="text-center alert alert-warning" ">
+    <div class="text-center alert alert-warning">
     {% endif %}
       {{ message }}</div>
     {% endif %}
-    <form method="POST" class="text-center mt-4 mb-5" >
+    <form method="POST" class="text-center mt-4 mb-5">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <input type="text" id="student_id" name="student_id" autofocus> <!-- Added id attribute -->
         <input type="submit" value="Submit" class="text-center btn btn-dark">
     </form>
       <h2 class="text-center">Number of Students Inside: {{count}}</h2>    
@@ -60,15 +60,11 @@
   </table>
     <br>
 
-
-
-
-
-
-
-
-
-
-
-
+    <script>
+        // Focus on the input field when the page loads
+        window.addEventListener('load', function() {
+            document.getElementById('student_id').focus();
+        });
+    </script>
+    
 {% endblock %}
