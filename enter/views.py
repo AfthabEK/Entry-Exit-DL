@@ -17,7 +17,7 @@ readerPort=100
 def library(request):
     # Get the current date and yesterday's date
     today = date.today()
-    yesterday = datetime.now().date() - timedelta(days=1)
+    yesterday = datetime.now().date() - timedelta(days=2)
 
     # Update entries with status 'IN' and date before or equal to yesterday
     record.objects.filter(status='IN', date__lte=yesterday, exittime__isnull=True).update(exittime='23:30:00', status='OUT')
