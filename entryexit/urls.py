@@ -21,4 +21,5 @@ urlpatterns = [
     path('recordsbymonth/', views.recordsbymonth, name='recordsbymonth'),
     path('exportbymonth/', views.exportbymonth, name='exportbymonth'),
     path('shifts/', views.shifts, name='shifts'),
+    path('statistics/', views.statistics, name='statistics'),
 ]

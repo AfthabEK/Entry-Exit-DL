@@ -276,3 +276,112 @@ def isfour(s):
         return True
     else:
         return False
+    
+'''
+def statistics(request):
+    # Create a dictionary to store the total entries for each weekday
+    total_entries_by_weekday = {
+        "Monday": 0,
+        "Tuesday": 0,
+        "Wednesday": 0,
+        "Thursday": 0,
+        "Friday": 0,
+    }
+
+    # Create a dictionary to store the number of weeks for each weekday
+    weeks_by_weekday = {
+        "Monday": 0,
+        "Tuesday": 0,
+        "Wednesday": 0,
+        "Thursday": 0,
+        "Friday": 0,
+    }
+
+    # Query the database for all entry records
+    all_entries = record.objects.all().order_by('-date')
+
+    # Iterate through the entries and update the dictionaries
+    prev_date = None
+    for entry in all_entries:
+        if entry.date != prev_date:
+            weeks_by_weekday[entry.date.strftime("%A")] += 1
+            prev_date = entry.date
+        total_entries_by_weekday[entry.date.strftime("%A")] += 1
+
+
+
+    # Calculate the average entries for each weekday
+    for weekday in total_entries_by_weekday:
+        if weeks_by_weekday[weekday] > 0:
+            total_entries_by_weekday[weekday] /= weeks_by_weekday[weekday]
+
+    data = {
+        "weekdays": list(total_entries_by_weekday.keys()),  # Extract weekdays
+        "average_entries": list(total_entries_by_weekday.values()),  # Extract averages
+    }
+
+    return render(request, "statistics.html", {"data": data})
+'''
+
+def statistics(request):
+
+    monday=0;
+    tuesday=0;
+    wednesday=0;
+    thursday=0;
+    friday=0;
+    saturday=0;
+    sunday=0;
+
+    monday_entries=0;
+    tuesday_entries=0;
+    wednesday_entries=0;
+    thursday_entries=0;
+    friday_entries=0;
+    saturday_entries=0;
+    sunday_entries=0;
+
+
+    # Query the database for all entry records  
+    all_entries = record.objects.all().order_by('-date')
+
+    # Iterate through the entries and update the dictionaries
+    prev_date = None
+    for entry in all_entries:
+        if entry.date != prev_date:
+            if entry.date.strftime("%A")=="Monday":
+                monday+=1
+            elif entry.date.strftime("%A")=="Tuesday":
+                tuesday+=1
+            elif entry.date.strftime("%A")=="Wednesday":
+                wednesday+=1
+            elif entry.date.strftime("%A")=="Thursday":
+                thursday+=1
+            elif entry.date.strftime("%A")=="Friday":
+                friday+=1
+            elif entry.date.strftime("%A")=="Saturday":
+                saturday+=1
+            elif entry.date.strftime("%A")=="Sunday":
+                sunday+=1
+            prev_date = entry.date
+        if entry.status=="OUT":
+            if entry.date.strftime("%A")=="Monday":
+                monday_entries+=1
+            elif entry.date.strftime("%A")=="Tuesday":
+                tuesday_entries+=1
+            elif entry.date.strftime("%A")=="Wednesday":
+                wednesday_entries+=1
+            elif entry.date.strftime("%A")=="Thursday":
+                thursday_entries+=1
+            elif entry.date.strftime("%A")=="Friday":
+                friday_entries+=1
+            elif entry.date.strftime("%A")=="Saturday":
+                saturday_entries+=1
+            elif entry.date.strftime("%A")=="Sunday":
+                sunday_entries+=1
+
+
+
+
+    #return render(request, "statistics.html", {'monday':monday,'tuesday':2,'wednesday':3,'thursday':4,'friday':5,'saturday':6,'sunday':7})
+    return render(request, "statistics.html", {'monday':monday,'tuesday':tuesday,'wednesday':wednesday,'thursday':thursday,'friday':friday,'saturday':saturday,'sunday':sunday,'monday_entries':monday_entries,'tuesday_entries':tuesday_entries,'wednesday_entries':wednesday_entries,'thursday_entries':thursday_entries,'friday_entries':friday_entries,'saturday_entries':saturday_entries,'sunday_entries':sunday_entries})
