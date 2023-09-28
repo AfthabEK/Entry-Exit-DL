@@ -7,10 +7,11 @@
 {% block content %}
     <br>
     <br>
-    <h1 class="text-center">Central Library Entry-Exit System</h1>
+
+    <h1 class="text-center " style="font-size: 50px;">Central Library Entry-Exit System</h1>
     <!-- make the message green when it is an entry and red when it is exit-->
 
-    <h2 class="text-center text-black-50">Place your ID card on the reader and click Submit</h2>
+    <h1 class="text-center text-black-100">Place your ID card on the reader and press <u>Enter</u></h1>
     {% if message == "" %}
     
     {% else %}
@@ -21,7 +22,8 @@
     {% else %}
     <div class="text-center alert alert-warning">
     {% endif %}
-      {{ message }}</div>
+    <h3 class="text-center">{{ message }}</h3>
+      </div>
     {% endif %}
     <form method="POST" class="text-center mt-4 mb-5">
         {% csrf_token %}

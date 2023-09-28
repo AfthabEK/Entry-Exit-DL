@@ -7,11 +7,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from datetime import date, timedelta
 from django.http import HttpResponse
-import socket
-import time
-
-readerIP='192.168.230.16'
-readerPort=100
+from .functions import isnine,isfour,read_data_with_retry
 
 
 def library(request):
@@ -104,6 +100,17 @@ def library(request):
                     message = f"Student with roll number {student_id} has entered the library at {current_time}"
                 else:
                     message = f"Staff with ID {student_id} has entered the library at {current_time}"
+            # Count the number of students with 'IN' status for today
+    count = record.objects.filter(status='IN', date=today).count()
+
+    # Count total visits today
+    total_visits_today = record.objects.filter(date=today).count()
+
+    # Separate counts for different shifts
+    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=today).count()
+    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=today).count()
+    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=today).count()
+
     return render(request, 'library.html', {
         'form': StudentEntryExitForm(),
         'message': message,
@@ -202,51 +209,6 @@ def exportbymonth(request):
     
 
 
-def read_data_with_retry():
-    start_time = time.time()
-    while time.time() - start_time < 5:
-        try:
-            student_id = readData()
-            if student_id:
-                return student_id[1:]  # Return the data if successfully read
-        except Exception as e:
-            pass
-    return None  
-
-def readData():
-	try:
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.SOL_TCP)
-		s.connect((readerIP, readerPort))
-	except:
-		raise Exception('NetworkError: Socket creation failed.')
-
-	#print("Sending Read request.")
-	cmd = bytearray([10, 255, 2, 128, 117])
-	s.send(cmd)
-
-	# Reading response
-	out = s.recv(2048)
-	cnt = out[5]
-	#print("Response: " + " ".join("%02x" % b for b in out))
-
-	#print("Sending get tag data request.")
-	cmd = bytearray([10, 255, 3, 65, 16, 163])
-	s.send(cmd)
-
-	# Reading response
-	out = s.recv(2048)
-	#print("Response: " + " ".join("%02x" % b for b in out))
-	if out[4] > 1:
-		raise Exception("WARNING: More than one tags in range!!!")
-	elif out[4] == 0:
-		raise Exception("WARNING: No tags in range!!!")
-	out = out[7:7+12][::-1]
-	if out[1] == 0x9e:
-		raise Exception("WARNING: Attempted to read empty tag.")
-	out = out.decode()
-	out = ''.join([c if ord(c) != 0 else '' for c in out])
-     
-	return out
 
 
 def shifts(request):
@@ -264,64 +226,6 @@ def shifts(request):
          
 
 
-def isnine(s):
-    if len(s)==9 and s[0].isalpha() and s[1:7].isdigit() and s[7:9].isalpha():
-        return True
-    else:
-        return False
-    
-
-def isfour(s):
-    if len(s)==4 and s[0:3].isdigit():
-        return True
-    else:
-        return False
-    
-'''
-def statistics(request):
-    # Create a dictionary to store the total entries for each weekday
-    total_entries_by_weekday = {
-        "Monday": 0,
-        "Tuesday": 0,
-        "Wednesday": 0,
-        "Thursday": 0,
-        "Friday": 0,
-    }
-
-    # Create a dictionary to store the number of weeks for each weekday
-    weeks_by_weekday = {
-        "Monday": 0,
-        "Tuesday": 0,
-        "Wednesday": 0,
-        "Thursday": 0,
-        "Friday": 0,
-    }
-
-    # Query the database for all entry records
-    all_entries = record.objects.all().order_by('-date')
-
-    # Iterate through the entries and update the dictionaries
-    prev_date = None
-    for entry in all_entries:
-        if entry.date != prev_date:
-            weeks_by_weekday[entry.date.strftime("%A")] += 1
-            prev_date = entry.date
-        total_entries_by_weekday[entry.date.strftime("%A")] += 1
-
-
-
-    # Calculate the average entries for each weekday
-    for weekday in total_entries_by_weekday:
-        if weeks_by_weekday[weekday] > 0:
-            total_entries_by_weekday[weekday] /= weeks_by_weekday[weekday]
-
-    data = {
-        "weekdays": list(total_entries_by_weekday.keys()),  # Extract weekdays
-        "average_entries": list(total_entries_by_weekday.values()),  # Extract averages
-    }
-
-    return render(request, "statistics.html", {"data": data})
-'''
 
 def statistics(request):
 

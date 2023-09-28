@@ -7,8 +7,21 @@
 <br>
 <br>
     <h1>Statistics</h1>
+    <div class="chart-container">
     <canvas id="entryChart" width="400" height="200"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    </div>
+
+    <style>
+        /* CSS for the chart container */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 400px; /* Adjust the height as needed */
+        }
+    </style>
+
     <script>
         // Data from the Django view
         var weekdayLabels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -62,9 +75,13 @@
                     fontSize: 25 //set font size
                     //set font size
                     
-
-                    
-                }
+                
+                },
+                animation: {
+                    duration: 2000, 
+                    easing: 'easeInCubic' 
+                },
+                
             }
         });
     </script>
