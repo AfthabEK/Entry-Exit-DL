@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from .functions import isnine,isfour,read_data_with_retry
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractWeekDay
+import datetime as dt
 
 
 def library(request):
@@ -18,8 +19,14 @@ def library(request):
     yesterday = datetime.now().date() - timedelta(days=2)
 
     # Update entries with status 'IN' and date before or equal to yesterday
-    record.objects.filter(status='IN', date__lte=yesterday, exittime__isnull=True).update(exittime='23:30:00', status='OUT')
+    #record.objects.filter(status='IN', date__lte=yesterday, exittime__isnull=True).update(exittime='23:30:00', status='OUT')
+    now = datetime.now()
 
+    
+    current_time = now.strftime("%H:%M:%S")
+    #update entries with status 'IN' and time before 16 hours from now to current time
+    #record.objects.filter(status='IN', entrytime__lte=(now - timedelta(minutes=1)).strftime("%H:%M:%S")).update(exittime=current_time, status='OUT')
+    record.objects.filter(status='IN', entrytime__gte=(now - timedelta(hours=16)).strftime("%H:%M:%S")).update(exittime=current_time, status='OUT')
 
     # Count the number of students with 'IN' status for today
     count = record.objects.filter(status='IN', date=today).count()
@@ -38,7 +45,7 @@ def library(request):
     if request.method == 'POST':
         student_idx = request.POST.get('student_id')
         student_id = student_idx.upper()
-        now = datetime.now()
+        
         current_time = now.strftime("%H:%M:%S")
 
         if student_id == "":
@@ -214,19 +221,41 @@ def exportbymonth(request):
 
 
 def shifts(request):
+    morning_start = dt.time(0, 0, 0)
+    morning_end = dt.time(8, 0, 0)
+
+    general_start = dt.time(8, 0, 0)
+    general_end = dt.time(16, 30, 0)
+
+    night_start = dt.time(16, 30, 0)
+    night_end = dt.time(23, 59, 59)
+    
     if request.method == 'GET':
 
         #count number of morning shifts with atleast one entry
-        morning_shift_count = record.objects.filter(Q(entrytime__gte='00:00:00', entrytime__lte='08:00:00') 
-        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+        all_entries = record.objects.all().order_by('-entrytime')
+        morning_shift_count=0
+        general_shift_count=0
+        night_shift_count=0
 
-        #count number of general shifts with atleast one entry
-        general_shift_count = record.objects.filter(Q(entrytime__gte='08:00:00', entrytime__lte='16:30:00')
-        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+        prev_date_m = None
+        prev_date_g = None
+        prev_date_n = None
 
-        #count number of night shifts with atleast one entry
-        night_shift_count = record.objects.filter(Q(entrytime__gte='16:30:00', entrytime__lte='23:59:59')
-        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+        for entry in all_entries:
+            if entry.entrytime >= morning_start and entry.entrytime <= morning_end:
+                if entry.date != prev_date_m:
+                    morning_shift_count += 1
+                    prev_date_m = entry.date
+            if entry.entrytime >= general_start and entry.entrytime <= general_end:
+                if entry.date != prev_date_g:
+                    general_shift_count += 1
+                    prev_date_g = entry.date
+            if entry.entrytime >= night_start and entry.entrytime <= night_end:
+                if entry.date != prev_date_n:
+                    night_shift_count += 1
+                    prev_date_n = entry.date
+
 
         if(morning_shift_count==0):
             morning_shift_count=1
@@ -248,12 +277,28 @@ def shifts(request):
     else:
         date = request.POST.get('date')
          
-        morning_shift_count = record.objects.filter(Q(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=date)
-        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
-        general_shift_count = record.objects.filter(Q(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=date)
-        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
-        night_shift_count = record.objects.filter(Q(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date)
-        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+        all_entries = record.objects.filter(date=date).order_by('-entrytime')
+        morning_shift_count=0
+        general_shift_count=0
+        night_shift_count=0
+
+        prev_date_m = None
+        prev_date_g = None
+        prev_date_n = None
+
+        for entry in all_entries:
+            if entry.date != prev_date_m:
+                if entry.entrytime >= datetime.time(0, 0, 0) and entry.entrytime <= datetime.time(8, 0, 0):
+                    morning_shift_count += 1
+                    prev_date_m = entry.date
+            if entry.date != prev_date_g:
+                if entry.entrytime >= datetime.time(8, 0, 0) and entry.entrytime <= datetime.time(16, 30, 0):
+                    general_shift_count += 1
+                    prev_date_g = entry.date
+            if entry.date != prev_date_n:
+                if entry.entrytime >= datetime.time(16, 30, 0) and entry.entrytime <= datetime.time(23, 59, 59):
+                    night_shift_count += 1
+                    prev_date_n = entry.date
 
         if(morning_shift_count==0):
             morning_shift_count=1
