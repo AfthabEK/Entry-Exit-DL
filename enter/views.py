@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from datetime import date, timedelta
 from django.http import HttpResponse
 from .functions import isnine,isfour,read_data_with_retry
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.models.functions import ExtractWeekDay
 
 
@@ -215,16 +215,65 @@ def exportbymonth(request):
 
 def shifts(request):
     if request.method == 'GET':
+
+        #count number of morning shifts with atleast one entry
+        morning_shift_count = record.objects.filter(Q(entrytime__gte='00:00:00', entrytime__lte='08:00:00') 
+        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+
+        #count number of general shifts with atleast one entry
+        general_shift_count = record.objects.filter(Q(entrytime__gte='08:00:00', entrytime__lte='16:30:00')
+        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+
+        #count number of night shifts with atleast one entry
+        night_shift_count = record.objects.filter(Q(entrytime__gte='16:30:00', entrytime__lte='23:59:59')
+        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+
+        if(morning_shift_count==0):
+            morning_shift_count=1
+        if(general_shift_count==0):
+            general_shift_count=1
+        if(night_shift_count==0):
+            night_shift_count=1
+
         morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00').count()
         general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00').count()
         night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59').count()
-        return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night,'form': DateForm()})
+
+        mx=morning/morning_shift_count
+        gx=general/general_shift_count
+        nx=night/night_shift_count
+        return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night,
+        'morning': mx, 'general': gx, 'night': nx,
+        'form': DateForm()})
     else:
-         date = request.POST.get('date')
-         morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=date).count()
-         general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=date).count()
-         night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date).count()
-         return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night, 'date': date,'form': DateForm()})
+        date = request.POST.get('date')
+         
+        morning_shift_count = record.objects.filter(Q(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=date)
+        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+        general_shift_count = record.objects.filter(Q(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=date)
+        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+        night_shift_count = record.objects.filter(Q(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date)
+        ).annotate(total_entries=Count('id')).filter(total_entries__gt=0).count()
+
+        if(morning_shift_count==0):
+            morning_shift_count=1
+        if(general_shift_count==0):
+            general_shift_count=1
+        if(night_shift_count==0):
+            night_shift_count=1
+
+        
+
+        morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=date).count()
+        general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=date).count()
+        night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date).count()
+
+        mx=morning/morning_shift_count
+        gx=general/general_shift_count
+        nx=night/night_shift_count
+        return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night,
+        'morning': mx, 'general': gx, 'night': nx,
+        'date': date,'form': DateForm()})
          
 
 
