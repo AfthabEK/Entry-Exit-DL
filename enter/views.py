@@ -8,6 +8,8 @@ from django.shortcuts import redirect
 from datetime import date, timedelta
 from django.http import HttpResponse
 from .functions import isnine,isfour,read_data_with_retry
+from django.db.models import Count
+from django.db.models.functions import ExtractWeekDay
 
 
 def library(request):
@@ -285,7 +287,28 @@ def statistics(request):
                 sunday_entries+=1
 
 
-
+    if(monday==0):
+        monday=1
+    if(tuesday==0):
+        tuesday=1
+    if(wednesday==0):
+        wednesday=1
+    if(thursday==0):
+        thursday=1
+    if(friday==0):
+        friday=1
+    if(saturday==0):
+        saturday=1
+    if(sunday==0):
+        sunday=1
 
     #return render(request, "statistics.html", {'monday':monday,'tuesday':2,'wednesday':3,'thursday':4,'friday':5,'saturday':6,'sunday':7})
-    return render(request, "statistics.html", {'monday':monday,'tuesday':tuesday,'wednesday':wednesday,'thursday':thursday,'friday':friday,'saturday':saturday,'sunday':sunday,'monday_entries':monday_entries,'tuesday_entries':tuesday_entries,'wednesday_entries':wednesday_entries,'thursday_entries':thursday_entries,'friday_entries':friday_entries,'saturday_entries':saturday_entries,'sunday_entries':sunday_entries})
+    #return render(request, "statistics.html", {'monday':monday,'tuesday':tuesday,'wednesday':wednesday,'thursday':thursday,'friday':friday,'saturday':saturday,'sunday':sunday,'monday_entries':monday_entries,'tuesday_entries':tuesday_entries,'wednesday_entries':wednesday_entries,'thursday_entries':thursday_entries,'friday_entries':friday_entries,'saturday_entries':saturday_entries,'sunday_entries':sunday_entries})
+    return render(request, "statistics.html", {'monday':monday_entries/monday,
+    'tuesday':tuesday_entries/tuesday,
+    'wednesday':wednesday_entries/wednesday,
+    'thursday':thursday_entries/thursday,
+    'friday':friday_entries/friday,
+    'saturday':saturday_entries/saturday,
+    'sunday':sunday_entries/sunday,
+        })
