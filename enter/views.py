@@ -5,12 +5,13 @@ from .models import student as studentrec
 from .forms import StudentEntryExitForm, DateForm, MonthForm
 from datetime import datetime
 from django.shortcuts import redirect
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.http import HttpResponse
 from .functions import isnine,isfour,read_data_with_retry
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractWeekDay
-import datetime as dt
+from django.db.models import F
+
 
 
 def library(request):
@@ -22,11 +23,15 @@ def library(request):
     #record.objects.filter(status='IN', date__lte=yesterday, exittime__isnull=True).update(exittime='23:30:00', status='OUT')
     now = datetime.now()
 
+    threshold_time = datetime.now() - timedelta(hours=16)
+    students_to_update = record.objects.filter(entrytime__lt=threshold_time, exittime__isnull=True)
+    students_to_update.update(exittime=F('entrytime'), status='OUT')
+
     
     current_time = now.strftime("%H:%M:%S")
     #update entries with status 'IN' and time before 16 hours from now to current time
     #record.objects.filter(status='IN', entrytime__lte=(now - timedelta(minutes=1)).strftime("%H:%M:%S")).update(exittime=current_time, status='OUT')
-    record.objects.filter(status='IN', entrytime__gte=(now - timedelta(hours=16)).strftime("%H:%M:%S")).update(exittime=current_time, status='OUT')
+    #record.objects.filter(status='IN', entrytime__gte=(now - timedelta(hours=16)).strftime("%H:%M:%S")).update(exittime=current_time, status='OUT')
 
     # Count the number of students with 'IN' status for today
     count = record.objects.filter(status='IN', date=today).count()
@@ -233,91 +238,90 @@ def shifts(request):
     if request.method == 'GET':
 
         #count number of morning shifts with atleast one entry
-        all_entries = record.objects.all().order_by('-entrytime')
-        morning_shift_count=0
-        general_shift_count=0
-        night_shift_count=0
+        # all_entries = record.objects.all().order_by('-entrytime')
+        # morning_shift_count=0
+        # general_shift_count=0
+        # night_shift_count=0
 
-        prev_date_m = None
-        prev_date_g = None
-        prev_date_n = None
+        # prev_date_m = None
+        # prev_date_g = None
+        # prev_date_n = None
 
-        for entry in all_entries:
-            if entry.entrytime >= morning_start and entry.entrytime <= morning_end:
-                if entry.date != prev_date_m:
-                    morning_shift_count += 1
-                    prev_date_m = entry.date
-            if entry.entrytime >= general_start and entry.entrytime <= general_end:
-                if entry.date != prev_date_g:
-                    general_shift_count += 1
-                    prev_date_g = entry.date
-            if entry.entrytime >= night_start and entry.entrytime <= night_end:
-                if entry.date != prev_date_n:
-                    night_shift_count += 1
-                    prev_date_n = entry.date
+        # for entry in all_entries:
+        #     if entry.entrytime >= morning_start and entry.entrytime <= morning_end:
+        #         if entry.date != prev_date_m:
+        #             morning_shift_count += 1
+        #             prev_date_m = entry.date
+        #     if entry.entrytime >= general_start and entry.entrytime <= general_end:
+        #         if entry.date != prev_date_g:
+        #             general_shift_count += 1
+        #             prev_date_g = entry.date
+        #     if entry.entrytime >= night_start and entry.entrytime <= night_end:
+        #         if entry.date != prev_date_n:
+        #             night_shift_count += 1
+        #             prev_date_n = entry.date
 
 
-        if(morning_shift_count==0):
-            morning_shift_count=1
-        if(general_shift_count==0):
-            general_shift_count=1
-        if(night_shift_count==0):
-            night_shift_count=1
+        # if(morning_shift_count==0):
+        #     morning_shift_count=1
+        # if(general_shift_count==0):
+        #     general_shift_count=1
+        # if(night_shift_count==0):
+        #     night_shift_count=1
+        morning = record.objects.filter(exittime__gte='00:00:00', exittime__lte='08:00:00').count()
+        general = record.objects.filter(exittime__gte='08:00:00', exittime__lte='16:30:00').count()
+        night = record.objects.filter(exittime__gte='16:30:00', exittime__lte='23:59:59').count()
 
-        morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00').count()
-        general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00').count()
-        night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59').count()
-
-        mx=morning/morning_shift_count
-        gx=general/general_shift_count
-        nx=night/night_shift_count
+        # mx=morning/morning_shift_count
+        # gx=general/general_shift_count
+        # nx=night/night_shift_count
         return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night,
-        'morning': mx, 'general': gx, 'night': nx,
+        #'morning': mx, 'general': gx, 'night': nx,
         'form': DateForm()})
     else:
         date = request.POST.get('date')
          
-        all_entries = record.objects.filter(date=date).order_by('-entrytime')
-        morning_shift_count=0
-        general_shift_count=0
-        night_shift_count=0
+        # all_entries = record.objects.filter(date=date).order_by('-entrytime')
+        # morning_shift_count=0
+        # general_shift_count=0
+        # night_shift_count=0
 
-        prev_date_m = None
-        prev_date_g = None
-        prev_date_n = None
+        # prev_date_m = None
+        # prev_date_g = None
+        # prev_date_n = None
 
-        for entry in all_entries:
-            if entry.date != prev_date_m:
-                if entry.entrytime >= datetime.time(0, 0, 0) and entry.entrytime <= datetime.time(8, 0, 0):
-                    morning_shift_count += 1
-                    prev_date_m = entry.date
-            if entry.date != prev_date_g:
-                if entry.entrytime >= datetime.time(8, 0, 0) and entry.entrytime <= datetime.time(16, 30, 0):
-                    general_shift_count += 1
-                    prev_date_g = entry.date
-            if entry.date != prev_date_n:
-                if entry.entrytime >= datetime.time(16, 30, 0) and entry.entrytime <= datetime.time(23, 59, 59):
-                    night_shift_count += 1
-                    prev_date_n = entry.date
+        # for entry in all_entries:
+        #     if entry.date != prev_date_m:
+        #         if entry.entrytime >= datetime.time(0, 0, 0) and entry.entrytime <= datetime.time(8, 0, 0):
+        #             morning_shift_count += 1
+        #             prev_date_m = entry.date
+        #     if entry.date != prev_date_g:
+        #         if entry.entrytime >= datetime.time(8, 0, 0) and entry.entrytime <= datetime.time(16, 30, 0):
+        #             general_shift_count += 1
+        #             prev_date_g = entry.date
+        #     if entry.date != prev_date_n:
+        #         if entry.entrytime >= datetime.time(16, 30, 0) and entry.entrytime <= datetime.time(23, 59, 59):
+        #             night_shift_count += 1
+        #             prev_date_n = entry.date
 
-        if(morning_shift_count==0):
-            morning_shift_count=1
-        if(general_shift_count==0):
-            general_shift_count=1
-        if(night_shift_count==0):
-            night_shift_count=1
+        # if(morning_shift_count==0):
+        #     morning_shift_count=1
+        # if(general_shift_count==0):
+        #     general_shift_count=1
+        # if(night_shift_count==0):
+        #     night_shift_count=1
 
         
 
-        morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=date).count()
-        general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=date).count()
-        night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=date).count()
+        morning = record.objects.filter(exittime__gte='00:00:00', exittime__lte='08:00:00', date=date).count()
+        general = record.objects.filter(exittime__gte='08:00:00', exittime__lte='16:30:00', date=date).count()
+        night = record.objects.filter(exittime__gte='16:30:00', exittime__lte='23:59:59', date=date).count()
 
-        mx=morning/morning_shift_count
-        gx=general/general_shift_count
-        nx=night/night_shift_count
+        # mx=morning/morning_shift_count
+        # gx=general/general_shift_count
+        # nx=night/night_shift_count
         return render(request, 'shifts.html', {'morning_count': morning, 'general_count': general, 'night_count': night,
-        'morning': mx, 'general': gx, 'night': nx,
+        # 'morning': mx, 'general': gx, 'night': nx,
         'date': date,'form': DateForm()})
          
 
