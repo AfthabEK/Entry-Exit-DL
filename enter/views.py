@@ -23,9 +23,9 @@ def library(request):
     #record.objects.filter(status='IN', date__lte=yesterday, exittime__isnull=True).update(exittime='23:30:00', status='OUT')
     now = datetime.now()
 
-    threshold_time = datetime.now() - timedelta(hours=16)
-    students_to_update = record.objects.filter(entrytime__lt=threshold_time, exittime__isnull=True)
-    students_to_update.update(exittime=F('entrytime'), status='OUT')
+    #threshold_time = datetime.now() - timedelta(hours=16)
+    #students_to_update = record.objects.filter(entrytime__lt=threshold_time, exittime__isnull=True)
+    #students_to_update.update(exittime=F('entrytime'), status='OUT')
 
     
     current_time = now.strftime("%H:%M:%S")
