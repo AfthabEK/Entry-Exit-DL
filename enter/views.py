@@ -226,6 +226,8 @@ def exportbymonth(request):
 
 
 def shifts(request):
+    import datetime as dt 
+    
     morning_start = dt.time(0, 0, 0)
     morning_end = dt.time(8, 0, 0)
 
