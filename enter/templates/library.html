@@ -16,11 +16,11 @@
     
     {% else %}
     {% if message == "Error: Failed to read data from the reader. Please try again." or message == "Error: Invalid roll number format. Please try again." %}
-    <div class="text-center alert alert-danger">
+    <div class="text-center alert alert-danger" id="message">
     {% elif x %}
-    <div class="text-center alert alert-success">
+    <div class="text-center alert alert-success" id="message">
     {% else %}
-    <div class="text-center alert alert-warning">
+    <div class="text-center alert alert-warning" id="message">
     {% endif %}
     <h3 class="text-center">{{ message }}</h3>
       </div>
@@ -67,6 +67,14 @@
         window.addEventListener('load', function() {
             document.getElementById('student_id').focus();
         });
+
+        var msg = document.getElementById("message");
+
+        // Set a timeout to hide the div after 5 seconds (5000 milliseconds)
+        setTimeout(function() {
+          // Change the CSS style to hide the div
+          msg.style.display = "none";
+        }, 5000);
     </script>
     
 {% endblock %}
