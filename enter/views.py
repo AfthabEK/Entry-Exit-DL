@@ -81,15 +81,15 @@ def library(request):
                     student.exittime = current_time
                     student.status = 'OUT'
                     student.save()
-                    #if there is a name and rollno in the table students, change the message to the name
-                    try:
-                        student_name = studentrec.objects.get(rollno=student_id)
-                        message = f"{student_name} has exited the library at {current_time}"
-                    except:
-                        if(len(student_id)==9):
-                            message = f"Student with roll number {student_id} has exited the library at {current_time}"
-                        else:
-                            message = f"Staff with ID {student_id} has exited the library at {current_time}"
+                    exit_hrs,exit_mins,exit_sec = student.exittime.split(':')
+                    entry_hrs,entry_mins,entry_sec = student.entrytime.strftime("%H:%M:%S").split(':')
+                    entry_hrs = int(entry_hrs)
+                    entry_mins = int(entry_mins)
+                    exit_hrs = int(exit_hrs)
+                    exit_mins = int(exit_mins)
+                    hours = exit_hrs - entry_hrs
+                    mins = exit_mins - entry_mins
+                    message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins here today"
                 else:
                         # Create a new record for a student entering
                     x=True
