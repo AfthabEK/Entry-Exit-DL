@@ -1,5 +1,5 @@
 ## Entry Exit DL
-
+MANNN
 A Django application to record the entry and exit of students into the library by scanning their ID cards using an RFID reader.
 
 ### System Requirements
