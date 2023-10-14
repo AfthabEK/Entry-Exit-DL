@@ -172,5 +172,6 @@ Please try to fix the following issues:
    - Change UI: the current UI is very basic. Try adding a collapsible navigation bar on the left side. Any other improvements to the current UI can also be done
    - Add a logic to logout the students at the end of a shift, and then enter them back in as a student in the next shift. For example, if a student comes in at 3pm and goes out at 4 pm. Make a logic to have the student logout at 4:30, and back in at 4:31pm.
    - Add a graph representations of students entry exit based on branch, year and shift. The roll number is in this format: "B200719CS", where B stands for B.Tech/B.Arch(M for M.Tech,P for PHD) the next two digits "20" stands for 2020, meaning the student took admission in 2020. That student is in his 4th year so to identify the year: If it monsoon semester(August to December) Year=current year-xy -2000 + 1, where x and y are the second and third digits. I it is winter semester(January to July)  Year=current year-xy -2000. The last to represent the branch.
+## Hi, my name is sh
 
 
