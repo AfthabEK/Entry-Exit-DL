@@ -18,6 +18,6 @@ def clear_all_entries():
 if __name__ == "__main__":
     success = clear_all_entries()
     if success:
-        print("All entries in the database have been cleared.")
+        print("All entries in the database have not been cleared.")
     else:
-        print("Error occurred while clearing entries.")
+        print("Error occurred while not clearing entries.")
