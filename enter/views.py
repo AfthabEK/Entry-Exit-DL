@@ -82,19 +82,23 @@ def library(request):
                     student.exittime = current_time
                     student.status = 'OUT'
                     student.save()
-                    exit_hrs,exit_mins,exit_sec = student.exittime.split(':')
-                    entry_hrs,entry_mins,entry_sec = student.entrytime.strftime("%H:%M:%S").split(':')
-                    entry_hrs = int(entry_hrs)
-                    entry_mins = int(entry_mins)
-                    exit_hrs = int(exit_hrs)
-                    exit_mins = int(exit_mins)
-                    hours = exit_hrs - entry_hrs
-                    mins = exit_mins - entry_mins
-                    secs = int(exit_sec) - int(entry_sec)
-                    if mins > 0: 
-                        message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins here today"
+                
+                    exit_hrs, exit_mins, exit_sec = map(int, student.exittime.split(':'))
+                    entry_hrs, entry_mins, entry_sec = map(int, student.entrytime.strftime("%H:%M:%S").split(':'))
+                
+                    # Calculate the time difference in seconds
+                    time_difference_seconds = (3600 * (exit_hrs - entry_hrs) +
+                                               60 * (exit_mins - entry_mins) +
+                                               (exit_sec - entry_sec))
+                
+                    hours = time_difference_seconds // 3600
+                    minutes = (time_difference_seconds % 3600) // 60
+                    seconds = time_difference_seconds % 60
+                
+                    if minutes > 0 or seconds > 0:
+                        message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {minutes} Mins {seconds} Secs here today"
                     else:
-                        message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins {secs} Secs here today"
+                        message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {minutes} Mins here today"
                 else:
                         # Create a new record for a student entering
                     x=True
