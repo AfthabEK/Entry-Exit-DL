@@ -148,11 +148,12 @@ input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, tex
     }
   </style>
  
+  
 </head>
 <body>
-<!--
-    <nav id="topNav" class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+
+  <nav id="topNav" class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'library' %}">Home</a>
@@ -185,15 +186,33 @@ input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, tex
                 <a class="nav-link active" aria-current="page" href="{% url 'statistics' %}">Statistics</a>
               </li>
             </ul>
-          
-        </div>
-      </nav>
--->
+            
+          </div>
+        </nav>
+        <br><br><br><br>
+             
       <br>
-      <br>
-
-{% block content%}
-{% endblock %}
-</body>
-</html>
-
+      
+      
+      
+      
+      {% block content%}
+      {% endblock %}
+      <script>
+        var lastScrollTop = 0;
+        navbar = document.getElementById("topNav");
+        window.addEventListener("scroll", function(){
+          var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          if(scrollTop>lastScrollTop){
+            navbar.style.top="-80px";
+          }
+          else{
+            navbar.style.top="0";
+          }
+          lastScrollTop = scrollTop;
+        })
+      </script>
+    </body>
+    </html>
+    
+    
