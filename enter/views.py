@@ -81,14 +81,13 @@ def library(request):
                     student.exittime = current_time
                     student.status = 'OUT'
                     student.save()
-                    exit_hrs,exit_mins,exit_sec = student.exittime.split(':')
-                    entry_hrs,entry_mins,entry_sec = student.entrytime.strftime("%H:%M:%S").split(':')
-                    entry_hrs = int(entry_hrs)
-                    entry_mins = int(entry_mins)
-                    exit_hrs = int(exit_hrs)
-                    exit_mins = int(exit_mins)
-                    hours = exit_hrs - entry_hrs
-                    mins = exit_mins - entry_mins
+                    exit_hrs,exit_mins,exit_sec =map(int,student.exittime.split(':'))
+                    exit_time=3600*exit_hrs + 60*exit_mins + exit_sec
+                    entry_hrs,entry_mins,entry_sec = map(int,student.entrytime.strftime("%H:%M:%S").split(':'))
+                    entry_time=3600*entry_hrs + 60*entry_mins + entry_sec
+                    duration=exit_time - entry_time
+                    hours = duration//3600
+                    mins = (duration%3600)//60
                     message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins here today"
                 else:
                         # Create a new record for a student entering
