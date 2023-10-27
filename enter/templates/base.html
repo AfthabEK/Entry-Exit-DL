@@ -18,25 +18,26 @@
  
  <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
 
-  <style type="text/css">
-    body {
-      background-color: #fafafa;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    h1 {
-      margin-top: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .navbar {
-  overflow: hidden;
-  background-color: #333;
-  position: fixed; /* Set the navbar to fixed position */
-  top: 0; /* Position the navbar at the top of the page */
-  width: 100%; /* Full width */
-}
+<style type="text/css">
+
+  body {
+    background-color: #fafafa;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  h1 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .navbar {
+    overflow: hidden;
+    background-color: #333;
+    position: fixed; /* Set the navbar to fixed position */
+    top: 0; /* Position the navbar at the top of the page */
+    width: 100%; /* Full width */
+  }
 /* Target the datepicker input field */
-input[type=date] {
+  input[type=date] {
     /* Add a background color and padding */
     background-color: #f8f9fa;
     padding: 0.5rem;
@@ -50,16 +51,16 @@ input[type=date] {
     box-shadow: 0px 0px 3px 0px #e1e1e1;
     /* Add a hover effect */
     transition: all 0.3s ease-in-out;
-}
+  }
 
-input[type=date]:hover {
+  input[type=date]:hover {
     /* Change the border and background color on hover */
     border-color: #007bff;
     background-color: #e1f5fe;
-}
+  }
 
 /* Target the text input fields */
-input[type=text], input[type=password], input[type=email], textarea {
+  input[type=text], input[type=password], input[type=email], textarea {
     /* Add a background color and padding */
     background-color: #f8f9fa;
     padding: 0.5rem;
@@ -73,88 +74,96 @@ input[type=text], input[type=password], input[type=email], textarea {
     box-shadow: 0px 0px 3px 0px #e1e1e1;
     /* Add a hover effect */
     transition: all 0.3s ease-in-out;
-}
+  }
 
 /* Target the text input fields on focus */
-input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, textarea:focus {
+  input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, textarea:focus {
     /* Change the border color on focus */
     border-color: #007bff;
     /* Add a box-shadow on focus */
     box-shadow: 0px 0px 3px 0px #007bff;
     /* Add a outline on focus */
     outline: none;
-}
+  }
 
 /* Target the text input fields on hover */
-input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, textarea:hover {
+  input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, textarea:hover {
     /* Change the border color on hover */
     border-color: #007bff;
-}
+  }
 
+  .navbar-nav > li{
+    padding-left:5px;
+    padding-right:5px;
+  }
 
+  .navbar .nav-item {
+    transition: background-color 0.5s ease;
+  }
 
+  .nav-item{
+    border-radius: 5px;
+  }
 
-    .navbar-nav > li{
-      padding-left:5px;
-      padding-right:5px;
-    }
-
-    .navbar .nav-item {
-  transition: background-color 0.5s ease;
-}
-
-.nav-item{
-  border-radius: 5px;
-}
-
-.navbar .nav-item:hover {
+  .navbar .nav-item:hover {
     background-color: #656f79;
     color: #000;
     border-color: #000;
-}
+  }
 
-    .neon-table {
-      width: 100%;
-      border-collapse: collapse;
-      box-shadow: 0 0 0px #000000;
-      position: absolute;
-      bottom:0;
-    }
+  .neon-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 0 0px #000000;
+    position: absolute;
+    bottom:0;
+  }
 
-    .neon-table th, .neon-table td {
-      padding: 10px;
-      text-align: center;
-      font-family: 'Roboto Mono', monospace;
-      border-bottom: 1px solid #ffffff;
-    }
+  .neon-table th, .neon-table td {
+    padding: 10px;
+    text-align: center;
+    font-family: 'Roboto Mono', monospace;
+    border-bottom: 1px solid #ffffff;
+  }
 
-    .neon-table th {    
-      background-color: #494b67;
-      color: #ffffff;
-      font-family: 'Roboto Mono', monospace;
-      font-weight: bold;
-    }
+  .neon-table th {    
+    background-color: #494b67;
+    color: #ffffff;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+  }
 
-    .neon-table tr:nth-child(even) {
-      background-color: #171818;
-      color: #ffffff;
-      font-family: 'Roboto Mono', monospace;
-    }
+  .neon-table tr:nth-child(even) {
+    background-color: #171818;
+    color: #ffffff;
+    font-family: 'Roboto Mono', monospace;
+  }
 
-    .neon-table tr:nth-child(odd) {
-      background-color: #141a4dfa;
-      font-family: 'Roboto Mono', monospace;
-      color: #ffffff;
-    }
-  </style>
+  .neon-table tr:nth-child(odd) {
+    background-color: #141a4dfa;
+    font-family: 'Roboto Mono', monospace;
+    color: #ffffff;
+  }
+
+  #list{
+    display:none;
+  }
+  
+  #topNav {
+    display:block;
+    
+
+  }
+
+</style>
  
   
 </head>
 <body>
 
   <nav id="topNav" class="navbar navbar-expand-md navbar-dark bg-dark">
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-            <ul class="navbar-nav ml-auto">
+    <div  class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul id="list" class="navbar-nav ml-auto">
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{% url 'library' %}">Home</a>
               </li>
@@ -199,18 +208,27 @@ input[type=text]:hover, input[type=password]:hover, input[type=email]:hover, tex
       {% block content%}
       {% endblock %}
       <script>
-        var lastScrollTop = 0;
-        navbar = document.getElementById("topNav");
-        window.addEventListener("scroll", function(){
-          var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          if(scrollTop>lastScrollTop){
-            navbar.style.top="-80px";
-          }
-          else{
-            navbar.style.top="0";
-          }
-          lastScrollTop = scrollTop;
-        })
+        const el = document.getElementById('topNav');
+        
+        const hiddenDiv = document.getElementById('list');
+        
+        // ✅ Show hidden DIV on hover
+        el.addEventListener('mouseover', function handleMouseOver() {
+          hiddenDiv.style.display = 'flex';
+        
+          // 👇️ if you used visibility property to hide the div
+          // hiddenDiv.style.visibility = 'visible';
+        });
+        
+        // ✅ (optionally) Hide DIV on mouse out
+        el.addEventListener('mouseout', function handleMouseOut() {
+          hiddenDiv.style.display = 'none';
+        
+          // 👇️ if you used visibility property to hide the div
+          // hiddenDiv.style.visibility = 'hidden';
+        });
+
+
       </script>
     </body>
     </html>
