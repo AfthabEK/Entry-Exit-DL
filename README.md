@@ -88,6 +88,7 @@ pip install -r requirements.txt
 8. Run the Django development server:
 
 ```bash
+python manage.py migrate
 python manage.py runserver
 ```
 
@@ -159,7 +160,11 @@ docker run -d -p 8000:8000 entry-exit-dl
 
 ### Admin Tasks
 
-To clear the database and delete all data, run the `clear.py` script. **Warning**: Make sure to backup data by downloading it before running this script.
+* To clear the database and delete all data, run the `clear.py` script. **Warning**: Make sure to backup data by downloading it before running this script.
+
+* To delete all entries with a specific prefix, run the clear_prefix.py script.
+
+* To set the status of all entries as exit, run the update_exit.py script.  
 
 ### Notes
 This software was made for the [eSSL U-5 RFID reader](https://www.esslsecurity.com/rfidreaders/u-5).
@@ -173,5 +178,3 @@ Please try to fix the following issues:
    - Add a logic to logout the students at the end of a shift, and then enter them back in as a student in the next shift. For example, if a student comes in at 3pm and goes out at 4 pm. Make a logic to have the student logout at 4:30, and back in at 4:31pm.
    - Add a graph representations of students entry exit based on branch, year and shift. The roll number is in this format: "B200719CS", where B stands for B.Tech/B.Arch(M for M.Tech,P for PHD) the next two digits "20" stands for 2020, meaning the student took admission in 2020. That student is in his 4th year so to identify the year: If it monsoon semester(August to December) Year=current year-xy -2000 + 1, where x and y are the second and third digits. I it is winter semester(January to July)  Year=current year-xy -2000. The last to represent the branch.
 
-
-Hi my name is madhav

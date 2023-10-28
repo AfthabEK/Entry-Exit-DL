@@ -77,7 +77,7 @@ def library(request):
             else:
                 student = record.objects.get(rollno=student_id, status='IN')
 
-                if student.exittime is None:
+                if student.status == 'IN':
                     student.exittime = current_time
                     student.status = 'OUT'
                     student.save()
