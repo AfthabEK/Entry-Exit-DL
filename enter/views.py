@@ -34,7 +34,7 @@ def library(request):
     #record.objects.filter(status='IN', entrytime__gte=(now - timedelta(hours=16)).strftime("%H:%M:%S")).update(exittime=current_time, status='OUT')
 
     # Count the number of students with 'IN' status for today
-    count = record.objects.filter(status='IN', date=today).count()
+    count = record.objects.filter(status='IN').count()
 
     # Count total visits today
     total_visits_today = record.objects.filter(date=today).count()
@@ -86,6 +86,8 @@ def library(request):
                     entry_hrs,entry_mins,entry_sec = map(int,student.entrytime.strftime("%H:%M:%S").split(':'))
                     entry_time=3600*entry_hrs + 60*entry_mins + entry_sec
                     duration=exit_time - entry_time
+                    if(duration<0):
+                        duration=duration+86400
                     hours = duration//3600
                     mins = (duration%3600)//60
                     message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins here today"
@@ -114,7 +116,7 @@ def library(request):
                 else:
                     message = f"Staff with ID {student_id} has entered the library at {current_time}"
             # Count the number of students with 'IN' status for today
-    count = record.objects.filter(status='IN', date=today).count()
+    count = record.objects.filter(status='IN').count()
 
     # Count total visits today
     total_visits_today = record.objects.filter(date=today).count()
