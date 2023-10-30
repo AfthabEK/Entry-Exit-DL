@@ -12,30 +12,13 @@
     <h1 class="text-center " style="font-size: 50px;">Central Library Entry-Exit System</h1>
     <!-- make the message green when it is an entry and red when it is exit-->
 
-    <h1 class="text-center text-black-100">Place your ID card on the reader and press <u>Enter</u></h1>
-    {% if message == "" %}
-    
-    {% else %}
-    {% if message == "Error: Failed to read data from the reader. Please try again." or message == "Error: Invalid roll number format. Please try again." %}
-    <div class="text-center alert alert-danger" id="message">
-    {% elif x %}
-    <div class="text-center alert alert-success" id="message">
-    {% else %}
-    <div class="text-center alert alert-warning" id="message">
-    {% endif %}
-    <h3 class="text-center">{{ message }}</h3>
-      </div>
-    {% endif %}
-    <br>
-    <br>
-    <form method="POST" class="text-center mt-4 mb-5">
-        {% csrf_token %}
+    <h1 class="text-center text-black-100">Place your ID card on the reader</h1>
+    <h3 class="text-center" id="message"></h3>
         
+    <div class="text-center mt-4 mb-5">
         <input type="text" id="student_id" name="student_id"> <!-- Added id attribute -->
-        <input type="submit" id="submit" value="Submit" class="text-center btn btn-dark" autofocus>
-    </form>
-    <br>
-    <br>
+        <input type="submit" id="Submit" value="Submit" onclick="submit();" class="text-center btn btn-dark" autofocus>
+    </div>
       <h2 class="text-center">Number of Students Inside: {{count}}</h2>    
       <h2 class="text-center">Total Visits Today: {{total_visits_today}}</h2>
 
@@ -67,7 +50,43 @@
   </table>
     <br>
 
+<<<<<<< HEAD
     <script src="{% static 'script.js' %}"></script>
     <script src="{% static 'toggle.js' %}"></script>
+=======
+    <script>
+        // Focus on the input field when the page loads
+        window.addEventListener('load', function() {
+            document.getElementById('student_id').focus();
+        });
+
+        var msg = document.getElementById("message");
+
+	var ws_url = "ws://" + window.location.hostname + ":8765";
+	console.log(ws_url);
+	var socket = new WebSocket(ws_url);
+	var input = document.getElementsByTagName('input')[0];
+	input.addEventListener("keydown", function(e){
+		if(e.code=="Enter")
+			submit();
+	});
+	function shorten_message(){
+		let content = msg.innerHTML;
+		msg.innerHTML = content.substr(content.indexOf('<br>')+4);
+	}
+	function response(event) {
+		let message = event.data;
+		msg.innerHTML = msg.innerHTML + message + '<br>';
+		console.log(msg.innerHTML);
+		console.log(message);
+		setTimeout(shorten_message, 5000);
+	};
+
+	socket.onmessage = response;
+	function submit(){
+		socket.send(input.value);
+	}
+    </script>
+>>>>>>> b6efa12 (added new feature: login without hitting Enter)
     
 {% endblock %}
