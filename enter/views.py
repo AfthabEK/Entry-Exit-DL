@@ -2,7 +2,7 @@ import datetime,csv
 from django.shortcuts import render
 from .models import record
 from .models import student as studentrec
-from .forms import StudentEntryExitForm, DateForm, MonthForm
+from .forms import DateForm, MonthForm
 from datetime import datetime
 from django.shortcuts import redirect
 from datetime import date, timedelta, datetime

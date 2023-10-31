@@ -33,7 +33,6 @@ def read_data():
         s.settimeout(2)
         s.connect((readerIP, readerPort))
     except Exception as e:
-        print(e)
         raise Exception('NetworkError: Socket creation failed.')
 
     #print("Sending Read request.")
@@ -75,14 +74,13 @@ async def reader_daemon():
             data = await read_data()
             if data:
                 student_id = data[1:]
+            else:
+                student_id = None
         except:
             pass
         if time.time() - start_time < 0.5:
             # so that the reader doesn't get 'stressed' out
-            try:
-                asyncio.sleep(0.5 - (time.time()-start_time))
-            except ValueError:
-                pass
+            await asyncio.sleep(0.5 - (time.time()-start_time))
         
         if old_student_id != student_id and student_id is not None:
             await record_queue.put(student_id)
@@ -147,15 +145,12 @@ async def record_queue_handler():
 async def library_message_queue_handler():
     while True:
         message = await library_message_queue.get()
-        print(message)
 
         ws_conns_ = set(ws_conns)
         for conn in ws_conns_:
             try:
                 await conn.send(message)
-                print('sent', message)
             except Exception as e:
-                print(e)
                 ws_conns.remove(conn)
 
 async def reader_ws_handler(websocket):
@@ -174,7 +169,7 @@ async def reader_ws_handler(websocket):
                     continue
             await record_queue.put(student_id)
     except Exception as e:
-        print(e)
+        pass
 
 async def reader_ws_server():
     async with websockets.serve(reader_ws_handler, "localhost", 8765):

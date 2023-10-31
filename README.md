@@ -112,7 +112,7 @@ docker build -t entry-exit-dl .
 4. Run the Docker container:
 
 ```bash
-docker run -d -p 8000:8000 entry-exit-dl
+docker run -d -p 8000:8000 -p 8765:8765 entry-exit-dl
 ```   
 
 
