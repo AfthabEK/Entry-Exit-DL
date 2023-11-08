@@ -12,6 +12,7 @@ urlpatterns = [
     path('records_today', views.records_today, name='records_today'),
     path('records_today/', views.records_today, name='records_today'),
     path('library', views.library, name='library'),
+    path('libraryid', views.libraryid, name='libraryid'),
     path('library/', views.library, name='library'),
     path('records', views.records, name='records'),
     path('records/', views.records, name='records'),

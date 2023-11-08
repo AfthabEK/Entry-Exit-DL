@@ -27,11 +27,10 @@
     <form method="POST" class="text-center mt-4 mb-5">
         {% csrf_token %}
         
-	<!--<input type="text" id="student_id" name="student_id" autofocus>
-	-->
+	<input type="text" id="student_id" name="student_id" autofocus>
+	
 		<!-- Added id attribute -->
-        
-        <input type="submit" value="Enter" class="text-center btn btn-dark" id="subm" >
+        <input type="submit" value="Submit" class="text-center btn btn-dark">
     </form>
       <h2 class="text-center">Number of Students Inside: {{count}}</h2>    
       <h2 class="text-center">Total Visits Today: {{total_visits_today}}</h2>
@@ -67,7 +66,7 @@
     <script>
         // Focus on the input field when the page loads
         window.addEventListener('load', function() {
-            document.getElementById('subm').focus();
+            document.getElementById('student_id').focus();
         });
 
         var msg = document.getElementById("message");

@@ -13,8 +13,96 @@ from django.db.models.functions import ExtractWeekDay
 from django.db.models import F
 
 
-
 def library(request):
+    today = date.today()
+    yesterday = datetime.now().date() - timedelta(days=2)
+
+    now = datetime.now()
+
+    current_time = now.strftime("%H:%M:%S")
+
+    count = record.objects.filter(status='IN').count()
+
+    total_visits_today = record.objects.filter(date=today).count()
+
+    morning = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00', date=today).count()
+    general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=today).count()
+    night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=today).count()
+
+    message = ""
+    x = False
+
+    if request.method == 'POST':
+        student_id=read_data_with_retry()
+        if student_id is None:
+            message = "Error: Failed to read data from the reader. Please try again."
+            return render(request, 'library.html', {
+                'form': StudentEntryExitForm(),
+                'message': message,
+                'x': x,
+                'count': count,
+                'total_visits_today': total_visits_today,
+                'morning_count': morning,
+                'general_count': general,
+                'night_count': night
+            })
+        else:
+            try:
+                # Check if student_id is in the correct format (e.g., B200719CS)
+                student_id=student_id.upper()
+                student = record.objects.get(rollno=student_id, status='IN')
+
+                if student.status == 'IN':
+                    student.exittime = current_time
+                    student.status = 'OUT'
+                    student.save()
+                    exit_hrs,exit_mins,exit_sec =map(int,student.exittime.split(':'))
+                    exit_time=3600*exit_hrs + 60*exit_mins + exit_sec
+                    entry_hrs,entry_mins,entry_sec = map(int,student.entrytime.strftime("%H:%M:%S").split(':'))
+                    entry_time=3600*entry_hrs + 60*entry_mins + entry_sec
+                    duration=exit_time - entry_time
+                    if(duration<0):
+                        duration=duration+86400
+                    hours = duration//3600
+                    mins = (duration%3600)//60
+                    message = f"Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins here today"
+                else:
+                        # Create a new record for a student entering
+                    x=True
+                    record.objects.create(rollno=student_id, entrytime=current_time, date=today)
+                    try:
+                        student_name = studentrec.objects.get(rollno=student_id)
+                        message = f"{student_name} has entered the library at {current_time}"
+                    except:
+                        if(len(student_id)==9):
+                            message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                        else:
+                            message = f"Staff with ID {student_id} has entered the library at {current_time}"
+            except record.DoesNotExist:
+                # Create a new record for a student entering
+                x=True
+                record.objects.create(rollno=student_id, entrytime=current_time, date=today)
+                try:
+                    student_name = studentrec.objects.get(rollno=student_id)
+                    message = f"{student_name} has entered the library at {current_time}"
+                except:
+                    if(len(student_id)==9):
+                        message = f"Student with roll number {student_id} has entered the library at {current_time}"
+                    else:
+                        message = f"Staff with ID {student_id} has entered the library at {current_time}"
+    return render(request, 'library.html', {
+        'form': StudentEntryExitForm(),
+        'message': message,
+        'x': x,
+        'count': count,
+        'total_visits_today': total_visits_today,
+        'morning_count': morning,
+        'general_count': general,
+        'night_count': night
+    })
+
+
+def libraryid(request):
     # Get the current date and yesterday's date
     today = date.today()
     yesterday = datetime.now().date() - timedelta(days=2)
@@ -57,7 +145,7 @@ def library(request):
             student_id = read_data_with_retry()
             if student_id is None:
                 message = "Error: Failed to read data from the reader. Please try again."
-                return render(request, 'library.html', {
+                return render(request, 'libraryid.html', {
                     'form': StudentEntryExitForm(),
                     'message': message,
                     'x': x,
@@ -75,6 +163,7 @@ def library(request):
             #if student_id==None or not( len(student_id)==9 or len(student_id)==4 ) or not student_id[0].isalpha() or not student_id[1:7].isdigit() or not student_id[7:9].isalpha():
                     message = "Error: Invalid roll number format. Please try again."
             else:
+                student_id=student_idx.upper()
                 student = record.objects.get(rollno=student_id, status='IN')
 
                 if student.status == 'IN':
@@ -126,7 +215,7 @@ def library(request):
     general = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00', date=today).count()
     night = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59', date=today).count()
 
-    return render(request, 'library.html', {
+    return render(request, 'libraryid.html', {
         'form': StudentEntryExitForm(),
         'message': message,
         'x': x,
