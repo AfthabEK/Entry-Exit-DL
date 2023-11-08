@@ -9,7 +9,7 @@ def update_entries():
     from enter.models import record
 
     try:
-        yesterday = datetime.now().date() - timedelta(days=3)
+        yesterday = datetime.now().date() - timedelta(days=2)
         
         entries_to_update = record.objects.filter(status='IN', date__lte=yesterday)
         

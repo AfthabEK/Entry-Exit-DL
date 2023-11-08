@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 def mark_exit():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'entryexit.settings')
     django.setup()
-    yesterday = date.today() - timedelta(days=2)
+    yesterday = date.today() - timedelta(days=1)
 
     from enter.models import record
 
