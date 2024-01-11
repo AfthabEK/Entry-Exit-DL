@@ -12,7 +12,7 @@ def export_rollnumbers():
     try:
         yesterday = datetime.now().date() - timedelta(days=1)
         
-        entries_to_export = record.objects.filter(status='IN', date__lte=yesterday)
+        entries_to_export = record.objects.filter(status='IN')
         
         with open('status_in.csv', mode='w', newline='') as file:
             writer = csv.writer(file)

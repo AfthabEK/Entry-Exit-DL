@@ -151,6 +151,21 @@ def allrecords(request):
     form = DateForm(request.POST)
     return render(request, 'allrecords.html', {'students': students, 'form': form})
 
+def allrecords_morning(request):
+    students = record.objects.filter(entrytime__gte='00:00:00', entrytime__lte='08:00:00').order_by('-date','-entrytime')
+    form = DateForm(request.POST)
+    return render(request, 'allrecords_morning.html', {'students': students, 'form': form})
+
+def allrecords_general(request):
+    students = record.objects.filter(entrytime__gte='08:00:00', entrytime__lte='16:30:00').order_by('-date','-entrytime')
+    form = DateForm(request.POST)
+    return render(request, 'allrecords_general.html', {'students': students, 'form': form})
+
+def allrecords_night(request):
+    students = record.objects.filter(entrytime__gte='16:30:00', entrytime__lte='23:59:59').order_by('-date','-entrytime')
+    form = DateForm(request.POST)
+    return render(request, 'allrecords_night.html', {'students': students, 'form': form})
+
 # view to display records of a particular date
 def records(request):
     if request.method == 'POST':

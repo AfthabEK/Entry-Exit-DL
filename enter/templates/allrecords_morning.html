@@ -1,0 +1,34 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %}
+  All Records
+{% endblock %}
+
+{% block content%}
+
+  <h1 class="text-center">All Records</h1>
+  <table class="neon-table">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>Roll Number</th>
+              <th>Entry Time</th>
+              <th>Exit Time</th>
+              <th>Date</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for student in students %}
+          <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ student.rollno }}</td>
+              <td>{{ student.entrytime }}</td>
+              <td>{{ student.exittime|default:'--:--' }}</td>
+              <td>{{ student.date|date:'d/m/y' }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  <a href="{% url 'export' %}">Export as CSV</a>
+{% endblock %}
+
