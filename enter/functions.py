@@ -67,7 +67,8 @@ def read_data():
 async def reader_daemon():
     global student_id
     old_student_id = None
-    
+    last_login_time = None
+
     while True:
         start_time = time.time()
         try:
@@ -81,9 +82,10 @@ async def reader_daemon():
         if time.time() - start_time < 0.5:
             # so that the reader doesn't get 'stressed' out
             await asyncio.sleep(0.5 - (time.time()-start_time))
-        
-        if old_student_id != student_id and student_id is not None:
+
+        if (old_student_id != student_id and student_id is not None) or (last_login_time is not None and old_student_id == student_id and time.time() - last_login_time >= 10):
             await record_queue.put(student_id)
+            last_login_time = time.time()
             old_student_id = student_id
 
 @sync_to_async
