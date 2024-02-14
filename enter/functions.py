@@ -136,6 +136,10 @@ def insert_record(student_id):
                 message = f'<span class="text-center alert alert-success">Student with roll number {student_id} has entered the library at {current_time}</span>'
             else:
                 message = f'<span class="text-center alert alert-success">Staff with ID {student_id} has entered the library at {current_time}</span>'
+    except Exception as e:
+        message = f'<span class="text-center alert alert-danger">Error: Database exception encountered</span>'
+        print(e)
+
     return message
             
 async def record_queue_handler():
