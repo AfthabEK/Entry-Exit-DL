@@ -70,6 +70,7 @@ async def reader_daemon():
     last_login_time = None
 
     while True:
+        student_id = None
         start_time = time.time()
         try:
             data = await read_data()
