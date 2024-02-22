@@ -111,6 +111,8 @@ def insert_record(student_id):
                 entry_time=3600*entry_hrs + 60*entry_mins + entry_sec
                 duration=exit_time - entry_time
                 hours = duration//3600
+                if hours<0:
+                    hours+=24
                 mins = (duration%3600)//60
                 message = f'<span class="text-center alert alert-warning">Thank you for visiting NITC Library, you have spent {hours} Hrs {mins} Mins here today</span>'
             else:
